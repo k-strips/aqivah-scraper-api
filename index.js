@@ -12,12 +12,15 @@ const db = new sqlite3.Database(
 
 const sourceRoutes = require('./routes/sources');
 const fieldRoutes = require('./routes/fields');
+const scraperRoutes = require('./routes/scrapers');
+const paginationTypeRoutes = require('./routes/paginationTypes');
 // const responser = require('@zarcobox/responser');
 
 const app = express();
 const PORT = 5000;
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({
   allowedOrigins: [
     'localhost:*',
@@ -33,6 +36,8 @@ app.use((err, req, res, next) => {
 
 app.use('/sources', sourceRoutes);
 app.use('/fields', fieldRoutes);
+app.use('/scrapers', scraperRoutes);
+app.use('/pagination-types', paginationTypeRoutes);
 
 app.get('/', (req, res) => res.send('welcome to the aqivah api'));
 
