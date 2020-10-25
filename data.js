@@ -43,5 +43,12 @@ module.exports = {
         }
       },
     },
+  },
+
+  scrapers: {
+    1: {
+      label: 'New Properties Scraper',
+      id: 1,
+    }
   }
 }

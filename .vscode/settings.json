@@ -1,0 +1,24 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "aqivah-api",
+      "database": "${workspaceFolder:aqivah-scraper-api}/db/data.db"
+    },
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "aqivah-api",
+      "database": "${workspaceFolder:aqivah-scraper-api}/db/data.db"
+    },
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "aqivah-api",
+      "group": "aqivah",
+      "database": "${workspaceFolder:aqivah-scraper-api}/db/data.db"
+    }
+  ],
+  "sqltools.useNodeRuntime": true
+}

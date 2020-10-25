@@ -10,11 +10,14 @@ const db = new sqlite3.Database(
     console.log('Connected to database');
   });
 
+
+
 const sourceRoutes = require('./routes/sources');
 const fieldRoutes = require('./routes/fields');
 const scraperRoutes = require('./routes/scrapers');
 const paginationTypeRoutes = require('./routes/paginationTypes');
 const propertyRoutes = require('./routes/properties');
+const fieldTypeRoutes = require('./routes/fieldTypes');
 // const responser = require('@zarcobox/responser');
 
 const app = express();
@@ -40,9 +43,16 @@ app.use('/fields', fieldRoutes);
 app.use('/scrapers', scraperRoutes);
 app.use('/pagination-types', paginationTypeRoutes);
 app.use('/properties', propertyRoutes);
+app.use('/field-types', fieldTypeRoutes);
 
 app.get('/', (req, res) => res.send('welcome to the aqivah api'));
 
 app.listen(PORT, () => console.log('listening on port ' + PORT));
 
+// module.exports.db = db;
 module.exports.db = db;
+
+// exports.db = db;
+// exports.getDb = getDb;
+
+// module.exports = { db, getDb };
