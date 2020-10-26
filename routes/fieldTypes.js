@@ -3,6 +3,9 @@ const routes = express.Router();
 const { getDb, initialize } = require('../db/db');
 const { v4: uuid } = require('uuid');
 // const db = require('../db/db');
+// const db = require('../db/db');
+
+const db = getDb();
 
 routes.get('/', (req, res) => {
   const query = `
@@ -37,6 +40,32 @@ routes.post('/', (req, res) => {
     res.send(name);
   });
   // res.send(name);
+});
+
+routes.get('/:id', (req, res) => {
+  console.log('request value -> ', req.params);
+  const id = req.params.id;
+  if (!id) {
+    res.send('No id provided');
+    return;
+  }
+
+  const query = `
+  SELECT id, label
+  FROM fieldTypes
+  WHERE id = ?
+  `;
+
+  db.each(query, [id], (error, result) => {
+    if (error) {
+      console.log('failed to retrieve row', error);
+      res.sendStatus(404);
+      return;
+    }
+    console.log('result of fetching field type with id -> ', result);
+    res.send(result);
+  });
+
 });
 
 
