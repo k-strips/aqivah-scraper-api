@@ -13,14 +13,13 @@ router.get('/', (req, res) => {
 
   db.all(query, (err, rows) => {
     if (err) {
-      res.sendStatus(500);
+      res.status(500).json({ message: e });
       return;
     };
 
     res.send(rows);
 
   });
-  // res.send(data.fields);
 });
 
 module.exports = router;

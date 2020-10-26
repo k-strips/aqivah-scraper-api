@@ -2,6 +2,7 @@ const express = require('express');
 const routes = express.Router();
 const { getDb, initialize } = require('../db/db');
 const { v4: uuid } = require('uuid');
+const router = require('./fields');
 // const db = require('../db/db');
 // const db = require('../db/db');
 
@@ -68,5 +69,48 @@ routes.get('/:id', (req, res) => {
 
 });
 
+routes.put('/:id', (req, res) => {
+  const id = req.params.id;
+  console.log('request body -> ', req);
+  const { label } = req.body;
+  console.log('value of label -> ', label);
+
+  const query = `
+  UPDATE 
+    fieldTypes
+  SET 
+    label = ? 
+  WHERE id = ?;
+  `;
+
+  console.log(query);
+  db.all(query, [label, id], (error, rows) => {
+    if (error) {
+      console.log('error updating field type -> ', error);
+      return res.send(error);
+    }
+
+    console.log('result of update -> ', rows);
+    res.send('success');
+  });
+});
+
+
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+  const query = `
+  DELETE FROM fieldTypes
+  WHERE id = ?;
+  `;
+  db.run(query, [id], (error, rows) => {
+    console.log({ error, rows });
+    if (error) {
+      console.log('error deleting field type -> ', error);
+      return res.sendStatus(404);
+    }
+    console.log('result of deletion -> ', rows);
+    res.sendStatus(204);
+  });
+});
 
 module.exports = routes;
