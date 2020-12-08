@@ -49,6 +49,16 @@ app.use('/scraping-sessions', scrapingSessionRoutes);
 
 app.get('/', (req, res) => res.send('welcome to the aqivah api'));
 
+//404
+app.use((req, res, next) => {
+  return res.status(404).send({ message: `${req.url} not found` });
+});
+
+//500
+// app.use((err, req, res, next) => {
+//   return res.status(500).send({ message: 'Something went wrong.', details: err });
+// });
+
 app.listen(PORT, () => console.log('listening on port ' + PORT));
 
 // module.exports.db = db;

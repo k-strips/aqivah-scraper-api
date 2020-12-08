@@ -47,7 +47,7 @@ routes.get('/:id', (req, res) => {
   console.log('request value -> ', req.params);
   const id = req.params.id;
   if (!id) {
-    res.send('No id provided');
+    res.status(400).send('No id provided');
     return;
   }
 
