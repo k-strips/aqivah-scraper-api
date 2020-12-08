@@ -18,6 +18,7 @@ const scraperRoutes = require('./routes/scrapers');
 const paginationTypeRoutes = require('./routes/paginationTypes');
 const propertyRoutes = require('./routes/properties');
 const fieldTypeRoutes = require('./routes/fieldTypes');
+const scrapingSessionRoutes = require('./routes/scrapingSessions');
 // const responser = require('@zarcobox/responser');
 
 const app = express();
@@ -27,7 +28,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({
   allowedOrigins: [
-    'localhost:*',
+    '*/*',
   ]
 }));
 
@@ -44,6 +45,7 @@ app.use('/scrapers', scraperRoutes);
 app.use('/pagination-types', paginationTypeRoutes);
 app.use('/properties', propertyRoutes);
 app.use('/field-types', fieldTypeRoutes);
+app.use('/scraping-sessions', scrapingSessionRoutes);
 
 app.get('/', (req, res) => res.send('welcome to the aqivah api'));
 
