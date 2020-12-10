@@ -35,7 +35,7 @@ function getNextToScrape(callback = () => {}) {
     };
 
     console.log('getNextToScrpae results -> ', rows);
-    getSourceFieldsBySource(rows[0].id);
+    // getSourceFieldsBySource(rows[0].id);
   });
 
 
@@ -70,6 +70,12 @@ function getSourceFieldsBySource(sourceId) {
   `;
 
   db.run(query, [sourceId], callback);
+}
+
+function create(data){
+
+  
+
 }
 
 
