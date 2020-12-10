@@ -1,6 +1,32 @@
 const express = require('express');
 const router = express.Router();
 const data = require('./../data');
+const { v4: uuid } = require('uuid');
+const { getDb } = require('../db/db');
+const ScraperSession = require('../models/scraperSessions');
+
+router.post('/:id/sessions', (req, res) => {
+  const { id } = req.params;
+
+  console.log('called /scrapers/id/sessions with id of scraper is ', id);
+
+  const params = {
+    startedAt: Date.now(),
+    scraperId: id,
+  };
+
+  const callback = (err, rows, id) => {
+    if (err) {
+      console.log('there was an error querying ');
+      return res.status(400).send({ message: err });
+    }
+
+    return res.status(201).send({ message: 'Success', scraperSessionId: id });
+  };
+
+  ScraperSession.create(params, callback);
+
+});
 
 router.patch('/:id', (req, res) => {
   const { status } = req.body;
@@ -8,7 +34,7 @@ router.patch('/:id', (req, res) => {
   const { id } = req.params;
 
   console.log(`current status of scraper with id ${id} set to ${status}`);
-  res.send({ message: 'Success', sessionId: 1, });
+  res.status(204).send({ message: 'Success', sessionId: 1, });
 });
 
 

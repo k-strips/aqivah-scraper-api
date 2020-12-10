@@ -3,6 +3,8 @@ const router = express.Router();
 const data = require('./../data');
 // const { db } = require('../index');
 const { getDb, initialize } = require('../db/db');
+const Source = require('./../models/sources');
+const sources = require('./../models/sources');
 
 router.get('/', (req, res) => {
   const db = getDb();
@@ -16,7 +18,7 @@ router.get('/', (req, res) => {
   if (req.query.request === requestOptions.getNextSource) {
     console.log('called api /sources with req getnextsource');
     response = getNextSource();
-    res.send(response);
+    res.status(201).send(response);
   }
 
   if (!req.query.request) {
@@ -54,6 +56,8 @@ module.exports = router;
 
 
 function getNextSource() {
+  Source.getNextToScrape();
+  return;
   console.log('source to use -> ', data.sources[2]);
   return data.sources[2];
 }
