@@ -22,7 +22,7 @@ const scrapingSessionRoutes = require('./routes/scrapingSessions');
 // const responser = require('@zarcobox/responser');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.port || 5000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
