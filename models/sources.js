@@ -1,7 +1,10 @@
+// const db = require('../db/db');
 const { getDb } = require('../db/db');
+const { v4: uuid } = require('uuid');
+const SourceField = require('./sourceFields');
 
 
-function getNextToScrape(callback = () => {}) {
+function getNextToScrape(callback = () => { }) {
   // select them, ordered by timestamp (least recent first), then select the first from the list, 
   const db = getDb();
   const query = `
@@ -27,7 +30,7 @@ function getNextToScrape(callback = () => {}) {
   `;
 
   db.run(query, (err, rows) => {
-    console.log(JSON.stringify({err, rows}))
+    console.log(JSON.stringify({ err, rows }));
     if (err) {
       console.log('/sources/getnexttoscrape -> an error occurred -> ', err);
       callback(err, rows);
@@ -72,13 +75,34 @@ function getSourceFieldsBySource(sourceId) {
   db.run(query, [sourceId], callback);
 }
 
-function create(data){
+function create(data = {}, callback = () => { }) {
+  const db = getDb();
+  const { label, uri, isActive, paginationTypeId, sourceFields = [] } = data;
+  const id = uuid();
+  const createdAt = Date.now();
 
-  
+  const query = `
+  INSERT INTO sources
+    (id, label, uri, isActive, createdAt, paginationTypeId)
+  VALUES
+    (?,?,?,?,?,?)
+  ;
+  `;
+
+  db.run(
+    query,
+    [id, label, uri, isActive, createdAt, paginationTypeId],
+    SourceField.batchCreate(sourceFields, callback)
+  );
+  //creating a source involves creating the sourceFields, as well as the ff
+  // label, uri (baseUrl), isActive, createdAt, lastScrapedTime
 
 }
 
 
 module.exports = {
   getNextToScrape,
+  create,
+
+  getSourceFieldsBySource,
 };

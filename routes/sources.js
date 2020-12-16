@@ -4,7 +4,7 @@ const data = require('./../data');
 // const { db } = require('../index');
 const { getDb, initialize } = require('../db/db');
 const Source = require('./../models/sources');
-const sources = require('./../models/sources');
+// const sources = require('./../models/sources');
 
 router.get('/', (req, res) => {
   const db = getDb();
@@ -49,7 +49,23 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
   console.log('received source -> ', req.body);
-  res.send("Success");
+
+  try {
+    const callback = (err, rows) => {
+      console.log('any errors? -> ', err);
+      console.log('any values? -> ', rows);
+      if (err) {
+        res.status(400).send({ message: err });
+        return;
+      }
+
+      res.status(201).send({ message: 'Success' });
+    };
+    Source.create(req.body, callback);
+  } catch (e) {
+    console.log('error thrown -> ', e);
+    res.status(400).send({ message: e.message || 'Something went wrong' });
+  }
 });
 
 module.exports = router;
