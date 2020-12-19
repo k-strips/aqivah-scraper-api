@@ -4,6 +4,14 @@ const { v4: uuid } = require('uuid');
 const SourceField = require('./sourceFields');
 
 
+function list(callback = () => { }) {
+  const db = getDb();
+  const query = `SELECT id, label, uri, isActive, createdAt, lastScrapedTime, paginationTypeId
+  FROM sources;`;
+
+  db.run(query, callback);
+}
+
 function getNextToScrape(callback = () => { }) {
   // select them, ordered by timestamp (least recent first), then select the first from the list, 
   const db = getDb();
@@ -89,20 +97,35 @@ function create(data = {}, callback = () => { }) {
   ;
   `;
 
+  const augmentedSourceFields = sourceFields.map(each => ({ ...each, sourceId: id }));
+
   db.run(
     query,
     [id, label, uri, isActive, createdAt, paginationTypeId],
-    SourceField.batchCreate(sourceFields, callback)
+    SourceField.batchCreate(augmentedSourceFields, callback)
   );
   //creating a source involves creating the sourceFields, as well as the ff
   // label, uri (baseUrl), isActive, createdAt, lastScrapedTime
 
 }
 
+function remove(id, callback) {
+  if (!id) throw new Error('No ID provided');
+
+  const query = `
+  DELETE FROM sources
+  WHERE id = ?
+  `;
+
+  const db = getDb();
+  db.run(query, [id], callback);
+}
+
 
 module.exports = {
   getNextToScrape,
   create,
-
+  remove,
+  list,
   getSourceFieldsBySource,
 };
