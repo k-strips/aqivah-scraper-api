@@ -49,6 +49,15 @@ router.patch('/:id', (req, res) => {
   res.status(204).send({ message: 'Success', sessionId: 1, });
 });
 
+router.delete('/:id', (req, res) => {
+  const callback = (err, rows) => {
+    if (err) return res.status(500).send({ message: e || 'Something went wrong' });
+
+    res.status(200).send({ message: 'Success' });
+  };
+  Scrapers.remove(id, callback);
+});
+
 
 
 module.exports = router;
