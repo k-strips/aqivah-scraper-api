@@ -4,6 +4,18 @@ const data = require('./../data');
 const { v4: uuid } = require('uuid');
 const { getDb } = require('../db/db');
 const ScraperSession = require('../models/scraperSessions');
+const Scrapers = require('../models/scrapers');
+
+
+router.get('/', (req, res) => {
+  const callback = (err, rows) => {
+    if (err) return res.status(500).send({ message: 'Something went wrong' });
+
+    res.status(200).send({ message: 'Success', data: rows });
+  };
+
+  Scrapers.list(callback);
+});
 
 router.post('/:id/sessions', (req, res) => {
   const { id } = req.params;

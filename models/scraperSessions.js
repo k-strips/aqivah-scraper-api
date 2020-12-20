@@ -31,7 +31,23 @@ function create(params, callback) {
 
 }
 
+function list(callback = () => {}){
+  const query = 'SELECT * FROM scraperSessions;';
+
+  const db = getDb();
+  db.all(query, callback);
+}
+
+function get(id, callback = () => {}){
+  const query = 'SELECT * FROM scraperSession WHERE id = ?';
+  
+  const db = getDb();
+  db.all(query, [id], callback);
+}
+
 
 module.exports = {
   create,
+  list,
+  get,
 };

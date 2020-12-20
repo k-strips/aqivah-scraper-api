@@ -8,8 +8,9 @@ function list(callback = () => { }) {
   const db = getDb();
   const query = `SELECT id, label, uri, isActive, createdAt, lastScrapedTime, paginationTypeId
   FROM sources;`;
+  console.log('query for listing sources -> ', query);
 
-  db.run(query, callback);
+  db.all(query, callback);
 }
 
 function getNextToScrape(callback = () => { }) {
