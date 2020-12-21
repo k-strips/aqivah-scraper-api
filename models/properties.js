@@ -1,10 +1,11 @@
 const { v4: uuid } = require('uuid');
 const { getDb } = require('../db/db');
+const { checkForId } = require('./helpers');
 
 
 function createProperty() {
 
-  
+
 }
 
 function createPropertyDetail(params) {
@@ -26,9 +27,26 @@ function createPropertyDetail(params) {
   });
 }
 
+function listPropertiesBySessionId(sessionId, callback = () => { }) {
+  checkForId('models/properties.listPropertiesBySessionId', sessionId);
+
+  const query = `
+  SELECT * FROM 
+    properties, propertyDetails 
+  WHERE 
+    propertyDetails.propertyId = properties.id 
+  AND properties.scraperSessionId = ?
+  ;`;
+
+  const db = getDb();
+  db.all(query, [sessionId], callback);
+}
+
 
 
 module.exports = {
   createProperty,
   createPropertyDetail,
+
+  listPropertiesBySessionId,
 };
