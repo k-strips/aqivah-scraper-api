@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const data = require('./../data');
 const propertyResults = require('./../db/propertyResults');
-
+const Properties = require('./../models/properties');
 
 const { getDb } = require('../db/db');
 const { v4: uuid } = require('uuid');
@@ -77,55 +77,28 @@ router.post('/', (req, res) => {
 
 router.get('/', (req, res) => {
   //get the scraper session whose properties you want to show. if there's no scraper session, then return paginated list of all 
-  const { scraperSession } = req.body;
-  let query = '';
+  const { sessionId } = req.query;
+  console.log('incoming session id -> ', { sessionId, body: req.body, req, });
+  const callback = (err, rows) => {
+    if (err) return res.status(400).send({ message: err || 'Something went wrong' });
 
-  const generatePropertiesListQuery = scraperSessionId => {
-    if (Boolean(scraperSessionId)) return `
-    SELECT 
-      properties.id,
-      properties.uri,
-      properties.scraperSessionId,
-      properties.isDeleted
-      
-      fields.id,
-      fields.label,
-
-      propertyDetails.propertyId,
-      propertyDetails.sourceFieldId,
-      propertyDetails.details,
-      propertyDetails.isDeleted,
-
-      sourceFields.id,
-      sourceFields.fieldId,
-
-      sources.label,
-      sources.uri,
-
-    
-    FROM 
-      properties,
-      fields,
-      propertyDetails,
-      sources,
-      sourceFields,
-
-    WHERE
-      propertyDetails.sourceFieldId = sourceFields.id
-    AND sourceFields.fieldId = fields.id
-    AND properties.isDeleted = 0
-    AND propertyDetails.propertyId = properties.id
-    AND propertyDetails.isDeleted = 0
-
-    GROUPBY
-      properties.id
-    `;
+    res.status(200).send({ message: 'Success', data: rows, });
   };
-  if (Boolean(scraperSession)) {
-    query = ``;
-  } else {
-    query = ``;
-  }
+
+  Properties.listPropertiesBySessionId(sessionId, callback);
+
+});
+
+router.get('/:id', (req, res) => {
+  const { id } = req.params;
+
+  const callback = (err, rows) => {
+    if (err) return res.status(400).send({ message: err || 'Something went wrong' });
+
+    res.status(200).send({ message: 'Success', data: rows[0] });
+  };
+
+  Properties.get(id, callback);
 });
 
 

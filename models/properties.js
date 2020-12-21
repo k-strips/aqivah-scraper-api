@@ -42,6 +42,12 @@ function listPropertiesBySessionId(sessionId, callback = () => { }) {
   db.all(query, [sessionId], callback);
 }
 
+function get(id, callback = () => {}){
+  checkForId('models/properties.get', id);
+
+  const query = 'SELECT * FROM properties WHERE id = ?'
+}
+
 
 
 module.exports = {
