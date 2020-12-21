@@ -1,5 +1,6 @@
 const { v4: uuid } = require('uuid');
 const { getDb } = require('../db/db');
+const { checkForId } = require('./helpers');
 
 
 function create(params, callback) {
@@ -31,16 +32,25 @@ function create(params, callback) {
 
 }
 
-function list(callback = () => {}){
+function list(callback = () => { }) {
   const query = 'SELECT * FROM scraperSessions;';
 
   const db = getDb();
   db.all(query, callback);
 }
 
-function get(id, callback = () => {}){
+function listByScraper(scraperId, callback = () => { }) {
+  checkForId('models/scraperSessions.listByScraper', scraperId);
+
+  const query = `SELECT * FROM scraperSessions where scraperId = ?`;
+
+  const db = getDb();
+  db.all(query, [scraperId], callback);
+}
+
+function get(id, callback = () => { }) {
   const query = 'SELECT * FROM scraperSession WHERE id = ?';
-  
+
   const db = getDb();
   db.all(query, [id], callback);
 }
@@ -49,5 +59,6 @@ function get(id, callback = () => {}){
 module.exports = {
   create,
   list,
+  listByScraper,
   get,
 };

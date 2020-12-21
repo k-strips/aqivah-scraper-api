@@ -29,6 +29,21 @@ router.get('/:id', (req, res) => {
   Scrapers.get(id, callback);
 });
 
+router.get('/:id/sessions', (req, res) => {
+  const { id } = req.params;
+
+  const callback = (err, rows) => {
+    if (err) {
+      console.log('error getting scraper sessions -> ', err);
+      return res.status(400).send({ message: err || 'Something went wrong' });
+    }
+
+    return res.status(200).send({ message: 'Success', data: rows });
+  };
+
+  ScraperSession.listByScraper(id, callback);
+});
+
 router.post('/:id/sessions', (req, res) => {
   const { id } = req.params;
 
