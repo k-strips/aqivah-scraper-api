@@ -101,5 +101,20 @@ router.get('/:id', (req, res) => {
   Properties.get(id, callback);
 });
 
+router.get('/:id/details', (req, res) => {
+  const { id } = req.params;
+
+  const callback = (err, rows) => {
+    if (err) {
+      console.log('error fetching properties -> ', err);
+      return res.status(400).send({ message: err || 'Something went wrong' });
+    }
+
+    res.status(200).send({ message: 'Success', data: rows });
+  };
+
+  Properties.getDetails(id, callback);
+});
+
 
 module.exports = router;
