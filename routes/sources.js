@@ -4,6 +4,7 @@ const data = require('./../data');
 // const { db } = require('../index');
 const { getDb, initialize } = require('../db/db');
 const Source = require('./../models/sources');
+const { sources } = require('./../data');
 // const sources = require('./../models/sources');
 
 router.get('/', (req, res) => {
@@ -18,37 +19,77 @@ router.get('/', (req, res) => {
   if (req.query.request === requestOptions.getNextSource) {
     console.log('called api /sources with req getnextsource');
     response = getNextSource();
-    res.status(201).send(response);
+    return res.status(201).send(response);
   }
 
   if (!req.query.request) {
-    const query = `
-      SELECT
-        sources.id,
-        sources.label,
-        sources.uri,
-        sources.isActive,
-        sources.createdAt,
-        sources.lastScrapedTime,
-        sources.paginationTypeId AS paginationType
-      FROM
-        sources,
-        paginationTypes
-      
-
-    `;
-    db.all(query, (err, rows) => {
-      if (err) return err;
-      console.log('results of fetching sources -> ', rows);
-      res.send(rows);
-    });
+    // const query = `
+    //   SELECT
+    //     sources.id,
+    //     sources.label,
+    //     sources.uri,
+    //     sources.isActive,
+    //     sources.createdAt,
+    //     sources.lastScrapedTime,
+    //     sources.paginationTypeId AS paginationType
+    //   FROM
+    //     sources,
+    //     paginationTypes
+    //   WHERE paginationTypes.id = sources.paginationTypeId
+    // ;
+    // `;
+    // db.all(query, (err, rows) => {
+    //   if (err) return res.status(500).send({ message: 'Something went wrong' });
+    //   // console.log('results of fetching sources -> ', rows);
+    //   res.status(200).send(rows);
+    // });
     // response = data.sources;
+    const callback = (err, rows) => {
+      console.log('results of query -> ', { err, rows });
+
+      if (err) {
+        console.log('error -> ', err);
+        return res.status(500).send({ message: err || 'Something went wrong' });
+      }
+
+
+      res.status(200).send({ message: 'Success', data: rows });
+    };
+    Source.list(callback);
   }
   // res.send(response);
 });
 
+router.get('/next', (req, res) => {
+  const callback = (err, rows) => {
+    console.log('result of fetching next source -> ', { err, rows });
+    if (err) return res.status(500).send({ message: err || 'Something went wrong', data: err });
+
+    return res.status(200).send({ message: 'Success', data: rows });
+  };
+
+  const callbackToGetSourceFields = (err, rows) => {
+    if (err) {
+      console.log('error -> ', err);
+      res.status(500).send({ message: err || 'Unable to get source details' });
+      return;
+    }
+
+    const source = rows[0];
+    console.log('fetched source. now getting fields -> ', source);
+    Source.getSourceFieldsBySource(source.id, (err, rows) => {
+      console.log('after getting fields -> ', { err, rows });
+      const data = { ...source, fields: rows };
+      callback(err, data);
+    });
+  };
+
+
+  Source.getNextToScrape(callbackToGetSourceFields);
+});
+
 router.post('/', (req, res) => {
-  console.log('received source -> ', req.body);
+  console.log('received source -> ', JSON.stringify(req.body));
 
   try {
     const callback = (err, rows) => {
@@ -66,6 +107,22 @@ router.post('/', (req, res) => {
     console.log('error thrown -> ', e);
     res.status(400).send({ message: e.message || 'Something went wrong' });
   }
+});
+
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+  if (!id) return res.status(400).send({ message: 'No ID passed' });
+
+  const callback = (err, rows) => {
+    console.log('result of deleting source -> ', { err, rows });
+    if (err) return res.status(400).send({ message: err || 'Unable to delete the source. Something went wrong' });
+
+
+
+    res.status(200).send({ message: rows || 'Success' });
+  };
+
+  Source.remove(id, callback);
 });
 
 module.exports = router;
