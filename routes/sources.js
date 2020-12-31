@@ -4,6 +4,7 @@ const data = require('./../data');
 // const { db } = require('../index');
 const { getDb, initialize } = require('../db/db');
 const Source = require('./../models/sources');
+const { sources } = require('./../data');
 // const sources = require('./../models/sources');
 
 router.get('/', (req, res) => {
@@ -57,6 +58,34 @@ router.get('/', (req, res) => {
     Source.list(callback);
   }
   // res.send(response);
+});
+
+router.get('/next', (req, res) => {
+  const callback = (err, rows) => {
+    console.log('result of fetching next source -> ', { err, rows });
+    if (err) return res.status(500).send({ message: err || 'Something went wrong', data: err });
+
+    return res.status(200).send({ message: 'Success', data: rows });
+  };
+
+  const callbackToGetSourceFields = (err, rows) => {
+    if (err) {
+      console.log('error -> ', err);
+      res.status(500).send({ message: err || 'Unable to get source details' });
+      return;
+    }
+
+    const source = rows[0];
+    console.log('fetched source. now getting fields -> ', source);
+    Source.getSourceFieldsBySource(source.id, (err, rows) => {
+      console.log('after getting fields -> ', { err, rows });
+      const data = { ...source, fields: rows };
+      callback(err, data);
+    });
+  };
+
+
+  Source.getNextToScrape(callbackToGetSourceFields);
 });
 
 router.post('/', (req, res) => {

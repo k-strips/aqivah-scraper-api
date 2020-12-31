@@ -3,9 +3,50 @@ const { getDb } = require('../db/db');
 const { checkForId } = require('./helpers');
 
 
-function createProperty() {
+function batchCreate(scraperSessionId, properties = [], callback) {
+  const query = Object.values(properties).reduce((final, each, index) => {
+    const { id, uri } = each || {};
+    const termination = (index === Object.values(properties).length - 1) ? ';' : ',';
+
+    return `${final} 
+    \n ("${id}", "${uri}", "${scraperSessionId}") ${termination}`;
+  },
+    `INSERT INTO 
+    properties (id, uri, scraperSessionId)
+    VALUES`
+  );
+  console.log('resulting query to create properties -> ', query);
 
 
+  const db = getDb();
+  db.run(query, callback);
+}
+
+function batchCreateDetails(properties, callback = () => { }) {
+  const query = Object.values(properties).reduce((final, each, index) => {
+    const { id: propertyId, details: fields } = each || {};
+    const termination = (index === Object.values(properties).length - 1) ? ';' : ',';
+
+    const fieldsListForQuery = Object.keys(fields).map(sourceFieldId => {
+      const propertyDetailId = uuid();
+      console.log('new fields value -> ', fields[sourceFieldId]);
+
+      return `("${propertyDetailId}", "${propertyId}", "${sourceFieldId}", "${fields[sourceFieldId]}")`;
+    })
+      .join();
+
+    return `${final} 
+    \n ${fieldsListForQuery} ${termination}`;
+  },
+    `INSERT INTO 
+    propertyDetails (id, propertyId, sourceFieldId, details)
+    VALUES `
+  );
+
+  console.log('query to run -> ', query);
+
+  const db = getDb();
+  db.run(query, callback);
 }
 
 function createPropertyDetail(params) {
@@ -32,10 +73,9 @@ function listPropertiesBySessionId(sessionId, callback = () => { }) {
 
   const query = `
   SELECT * FROM 
-    properties, propertyDetails 
+    properties
   WHERE 
-    propertyDetails.propertyId = properties.id 
-  AND properties.scraperSessionId = ?
+   properties.scraperSessionId = ?
   ;`;
 
   const db = getDb();
@@ -58,29 +98,34 @@ function getDetails(id, callback = () => { }) {
 
   // use the property's id to get the details from 'propertyDetails', the array of fields that belong to the property.
   const callbackToGetPropertyDetails = (err, rows) => {
+    console.log('callback to get propertyd etails -> ', { err, rows });
     if (err) throw error;
 
     const formatDataForTransmission = (err, data) => {
+      console.log('format data for trans -> ', { data, rows, err });
+
       if (err) throw err;
 
-      console.log('format data for trans -> ', { data, rows, err });
       const finalValue = {
         fields: data,
         id,
-        uri: rows[0].uri,
+        uri: rows && rows[0] && rows[0].uri || '',
       };
       callback(null, finalValue);
     };
 
-    const getPropertyDetailsQuery = `SELECT 
-      propertyDetails.propertyId,
-      propertyDetails.sourceFieldId,
-      propertyDetails.details,
-      fields.label
-    FROM propertyDetails, fields
-    WHERE propertyDetails.propertyId = ?
-    AND propertyDetails.sourceFieldId = fields.id;
+    const getPropertyDetailsQuery = `SELECT * FROM propertyDetails
+    WHERE propertyDetails.propertyId = ?;
     `;
+    // const getPropertyDetailsQuery = `SELECT 
+    //   propertyDetails.propertyId,
+    //   propertyDetails.sourceFieldId,
+    //   propertyDetails.details,
+    //   fields.label
+    // FROM propertyDetails, fields
+    // WHERE propertyDetails.propertyId = ?
+    // AND propertyDetails.sourceFieldId = fields.id;
+    // `;
 
     db.all(getPropertyDetailsQuery, [id], formatDataForTransmission);
   };
@@ -99,7 +144,8 @@ function getDetails(id, callback = () => { }) {
 
 
 module.exports = {
-  createProperty,
+  batchCreate,
+  batchCreateDetails,
   createPropertyDetail,
   get,
   getDetails,

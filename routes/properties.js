@@ -80,6 +80,7 @@ router.get('/', (req, res) => {
   const { sessionId } = req.query;
   console.log('incoming session id -> ', { sessionId, body: req.body, req, });
   const callback = (err, rows) => {
+    console.log('response of gettin gproperties by session id -> ', { err, rows });
     if (err) return res.status(400).send({ message: err || 'Something went wrong' });
 
     res.status(200).send({ message: 'Success', data: rows, });
@@ -114,6 +115,37 @@ router.get('/:id/details', (req, res) => {
   };
 
   Properties.getDetails(id, callback);
+});
+
+router.post('/batch', (req, res) => {
+  // means it's coming from the scraper, in this format:
+  /** {
+   * id, 
+   * scraperSessionId, 
+   * properties: {
+   *  [id]: {id, sourceFieldId: details, uri: ' }
+   * }} */
+
+  console.log('incoming properties -> ', req.body);
+  req.body.properties.map(each => console.log(each.details));
+
+  const { scraperSessionId, properties } = req.body;
+
+  const mainCallback = (err, rows) => {
+    console.log("result of creating property details -> ", { err, rows });
+    if (err) return res.status(400).send({ message: err || 'Something went wrong', data: err, });
+
+    return res.status(201).send({ message: 'Success', data: rows });
+  };
+  //after creating the properties, if there were no issues, it means properties with the ids we have will be present in the db. we can go ahead to batch-create the fields.
+  const callbackToCreatePropertyDetails = (err, rows) => {
+    console.log('result of creating properties -> ', { err, rows });
+    if (err) return res.status(400).send({ message: err || 'something went wrong', data: err });
+
+    Properties.batchCreateDetails(properties, mainCallback);
+  };
+  Properties.batchCreate(scraperSessionId, properties, callbackToCreatePropertyDetails);
+
 });
 
 

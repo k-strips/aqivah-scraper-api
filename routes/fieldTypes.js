@@ -17,7 +17,7 @@ routes.get('/', (req, res) => {
 
   db.all(query, (err, rows) => {
     if (err) return error;
-    res.send(rows);
+    res.status(200).send({ message: 'Success', data: rows });
   });
 });
 
