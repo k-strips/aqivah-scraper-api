@@ -58,7 +58,7 @@ app.use((req, res, next) => {
 //   return res.status(500).send({ message: 'Something went wrong.', details: err });
 // });
 
-app.listen(PORT, () => console.log('listening on port ' + PORT));
+app.listen(PORT, () => console.log('listening on port ' + process.env.PORT || PORT));
 
 // module.exports.db = db;
 module.exports.db = db;
