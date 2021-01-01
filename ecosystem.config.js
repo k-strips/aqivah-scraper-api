@@ -1,5 +1,6 @@
 module.exports = {
   apps: [{
+    name: 'aqivah-scraper-api',
     script: './index.js',
     watch: '.'
   }],
@@ -12,7 +13,7 @@ module.exports = {
       repo: 'GIT_REPOSITORY',
       path: 'DESTINATION_PATH',
       'pre-deploy-local': '',
-      'post-deploy': 'npm install && pm2 deploy ecosystem.config.js production',
+      'post-deploy': 'npm install && pm2 startOrRestart ecosystem.config.js',
       'pre-setup': ''
     }
   }

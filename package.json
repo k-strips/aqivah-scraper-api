@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "pm2 deploy ecosystem.config.js production"
+    "start": "pm2 deploy ecosystem.config.js --env production"
   },
   "dependencies": {
     "@zarcobox/responser": "^1.1.0",
