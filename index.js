@@ -46,7 +46,7 @@ app.use('/properties', propertyRoutes);
 app.use('/field-types', fieldTypeRoutes);
 app.use('/scraping-sessions', scrapingSessionRoutes);
 
-app.get('/', (req, res) => res.send('welcome to the aqivah api'));
+app.get('/', (req, res) => res.status(200).send('welcome to the aqivah api'));
 
 //404
 app.use((req, res, next) => {
