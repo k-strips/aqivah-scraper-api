@@ -3,7 +3,7 @@ const router = express.Router();
 const data = require('./../data');
 // const { db } = require('../index');
 const { getDb, initialize } = require('../db/db');
-const Source = require('./../models/sources');
+const Source = require('../_models/sources');
 const { sources } = require('./../data');
 // const sources = require('./../models/sources');
 

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 // const data = require('../data');
 const { getDb, initialize } = require('../db/db');
-const Fields = require('../models/fields');
+const Fields = require('../_models/fields');
 
 const db = getDb();
 

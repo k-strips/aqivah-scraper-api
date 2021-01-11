@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 const data = require('./../data');
 const propertyResults = require('./../db/propertyResults');
-const Properties = require('./../models/properties');
+const Properties = require('../_models/properties');
 
 const { getDb } = require('../db/db');
 const { v4: uuid } = require('uuid');
-const { createPropertyDetail } = require('../models/properties');
+const { createPropertyDetail } = require('../_models/properties');
 
 
 function createNewProperty(params) {

@@ -3,8 +3,8 @@ const router = express.Router();
 const data = require('./../data');
 const { v4: uuid } = require('uuid');
 const { getDb } = require('../db/db');
-const ScraperSession = require('../models/scraperSessions');
-const Scrapers = require('../models/scrapers');
+const ScraperSession = require('../_models/scraperSessions');
+const Scrapers = require('../_models/scrapers');
 const { route } = require('./sources');
 
 
