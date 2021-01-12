@@ -15,3 +15,17 @@ const Source = db.define('Source', {
     }
   }
 });
+
+export default Source;
+
+/**
+ * id: uuid, defaultValue: uuidv4, primaryKey: true
+ * label: string
+ * url: string, [there's a way to validate the url. find it]
+ * isActive: boolean, defaultValue: true
+ * createdAt : date [is this automatically added to the table column?]
+ * lastScrapedTime: date, defaultValue: now
+ * paginationTypeId: uuid, references the paginationType table, the id field
+ * singlePropertyQuerySelector: string
+ * updatedAt: date, defaultValue: now [is this automatically added to the field]
+ */
