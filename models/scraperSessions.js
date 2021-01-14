@@ -7,3 +7,5 @@
  * resultMessage: string
  * type: enum [new_properties, update_properties]
  */
+
+ 

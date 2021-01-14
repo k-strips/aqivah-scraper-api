@@ -8,12 +8,7 @@ const Source = db.define('Source', {
   isActive: { type: DataTypes.BOOLEAN, defaultValue: true },
   createdAt: { type: DataTypes.NOW },
   lastScrapedTime: { type: DataTypes.DATE },
-  paginationTypeId: {
-    type: DataTypes.STRING,
-    references: {
-
-    }
-  }
+  paginationType: {type: DataTypes.ENUM}
 });
 
 export default Source;
@@ -25,7 +20,7 @@ export default Source;
  * isActive: boolean, defaultValue: true
  * createdAt : date [is this automatically added to the table column?]
  * lastScrapedTime: date, defaultValue: now
- * paginationTypeId: uuid, references the paginationType table, the id field
+ * paginationTypeId: enum, options: PAGINATED, INFINITE
  * singlePropertyQuerySelector: string
  * updatedAt: date, defaultValue: now [is this automatically added to the field]
  */
