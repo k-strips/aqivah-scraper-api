@@ -1,3 +1,5 @@
+import SourceField from './sourceFields';
+
 const { DataTypes } = require('sequelize');
 const { db } = require('./index');
 
@@ -29,6 +31,8 @@ const Source = db.define('Source', {
     values: ['INFINITE', 'PAGED']
   }
 });
+
+Source.hasMany(SourceField);
 
 export default Source;
 

@@ -2,12 +2,22 @@ const express = require('express');
 const router = express.Router();
 // const data = require('../data');
 const { getDb, initialize } = require('../db/db');
-const Fields = require('../_models/fields');
+const Fields = require('../models/fields');
 
-const db = getDb();
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const { id } = req.params || {};
+
+  try{
+    const result = await Fields.findOne({
+      where: { id }
+    });
+
+  }catch(e){
+
+    res.status(200)
+  }
+
 
   const query = `
   SELECT id, label, isRequired, isAqivahField

@@ -1,3 +1,5 @@
+import PropertyDetail from './propertyDetails';
+
 const { DataTypes } = require('sequelize');
 const { db } = require('./index');
 const ScraperSession = require('./scraperSessions');
@@ -21,13 +23,16 @@ const Property = db.define('Property', {
       isUrl: true,
     }
   },
-  scraperSessionId: {
-    type: DataTypes.UUID,
-    references: {
-      model: ScraperSession,
-      key: 'id',
-    }
-  }
+  // scraperSessionId: {
+  //   type: DataTypes.UUID,
+  //   references: {
+  //     model: ScraperSession,
+  //     key: 'id',
+  //   }
+  // }
 });
+
+Property.belongsTo(ScraperSession);
+Property.hasMany(PropertyDetail);
 
 export default Property;

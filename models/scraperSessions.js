@@ -1,3 +1,6 @@
+// import { scrapers } from '../data';
+import Property from './properties';
+
 const { DataTypes } = require('sequelize');
 const { db } = require('./index');
 
@@ -32,5 +35,7 @@ const ScraperSession = db.define('ScraperSession', {
     values: ['SUCCESS', 'FAILURE',],
   },
 });
+
+ScraperSession.hasMany(Property);
 
 export default ScraperSession;

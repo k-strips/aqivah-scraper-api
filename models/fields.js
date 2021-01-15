@@ -1,3 +1,5 @@
+import SourceField from './sourceFields';
+
 const { db } = require('./index');
 const { DataTypes } = require('sequelize');
 
@@ -7,7 +9,7 @@ const { DataTypes } = require('sequelize');
  * isAqivahField: boolean, defaultValue: false
  */
 
-const Fields = db.define('Fields', {
+const Field = db.define('Field', {
   id: {
     type: DataTypes.UUID,
     primaryKey: true,
@@ -24,4 +26,6 @@ const Fields = db.define('Fields', {
   }
 });
 
-export default Fields;
+Field.hasMany(SourceField);
+
+export default Field;

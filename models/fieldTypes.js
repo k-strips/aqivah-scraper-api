@@ -1,3 +1,5 @@
+import SourceField from './sourceFields';
+
 const { db } = require('./index');
 const { DataTypes } = require('sequelize');
 /**
@@ -16,5 +18,7 @@ const FieldType = db.define('FieldType', {
     unique: true,
   }
 });
+
+FieldType.hasMany(SourceField);
 
 export default FieldType;

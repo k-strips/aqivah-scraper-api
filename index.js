@@ -3,12 +3,12 @@ const cors = require('express-cors');
 const sqlite3 = require('sqlite3');
 
 const express = require('express');
-const db = new sqlite3.Database(
-  './db/data.db',
-  (error) => {
-    if (error) return console.log('Failed to connect to database', error);
-    console.log('Connected to database');
-  });
+// const db = new sqlite3.Database(
+//   './db/data.db',
+//   (error) => {
+//     if (error) return console.log('Failed to connect to database', error);
+//     console.log('Connected to database');
+//   });
 
 
 
@@ -19,6 +19,7 @@ const paginationTypeRoutes = require('./routes/paginationTypes');
 const propertyRoutes = require('./routes/properties');
 const fieldTypeRoutes = require('./routes/fieldTypes');
 const scrapingSessionRoutes = require('./routes/scrapingSessions');
+const { sequelize } = require('./models');
 // const responser = require('@zarcobox/responser');
 
 const app = express();
@@ -58,7 +59,10 @@ app.use((req, res, next) => {
 //   return res.status(500).send({ message: 'Something went wrong.', details: err });
 // });
 
-app.listen(PORT, () => console.log('listening on port ' + process.env.PORT || PORT));
+app.listen(PORT, async () => {
+  await sequelize.authenticate();
+  console.log('listening on port ' + process.env.PORT || PORT);
+});
 
 // module.exports.db = db;
 module.exports.db = db;

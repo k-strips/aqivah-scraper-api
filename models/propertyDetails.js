@@ -10,26 +10,26 @@ const SourceField = require('./sourceFields');
  * isDeleted: boolean, default: false
  */
 
-const PropertyDetails = db.define('PropertyDetails', {
+const PropertyDetail = db.define('PropertyDetail', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  propertyId: {
-    type: DataTypes.UUID,
-    references: {
-      model: Property,
-      key: 'id',
-    }
-  },
-  sourceFieldId: {
-    type: DataTypes.UUID,
-    references: {
-      model: SourceField,
-      key: 'id',
-    }
-  },
+  // propertyId: {
+  //   type: DataTypes.UUID,
+  //   references: {
+  //     model: Property,
+  //     key: 'id',
+  //   }
+  // },
+  // sourceFieldId: {
+  //   type: DataTypes.UUID,
+  //   references: {
+  //     model: SourceField,
+  //     key: 'id',
+  //   }
+  // },
   details: {
     type: DataTypes.STRING,
   },
@@ -40,4 +40,7 @@ const PropertyDetails = db.define('PropertyDetails', {
   }
 });
 
-export default PropertyDetails;
+PropertyDetail.belongsTo(Property);
+PropertyDetail.belongsTo(SourceField);
+
+export default PropertyDetail;

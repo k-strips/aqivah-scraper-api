@@ -1,3 +1,5 @@
+import PropertyDetail from './propertyDetails';
+
 const { db } = require('./index');
 const { DataTypes } = require('sequelize');
 const { default: Field } = require('./fields');
@@ -45,6 +47,13 @@ const SourceField = db.define('SourceField', {
     allowNull: false,
   }
 });
+
+SourceField.belongsTo(Field);
+SourceField.belongsTo(Source);
+SourceField.belongsTo(FieldType, {
+  foreignKey: 'typeId',
+});
+SourceField.hasMany(PropertyDetail);
 
 export default SourceField;
 
