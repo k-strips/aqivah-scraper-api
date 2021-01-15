@@ -18,9 +18,9 @@ export default Source;
  * label: string
  * url: string, [there's a way to validate the url. find it]
  * isActive: boolean, defaultValue: true
- * createdAt : date [is this automatically added to the table column?]
+//  * createdAt : date [is this automatically added to the table column?]
  * lastScrapedTime: date, defaultValue: now
  * paginationTypeId: enum, options: PAGINATED, INFINITE
  * singlePropertyQuerySelector: string
- * updatedAt: date, defaultValue: now [is this automatically added to the field]
+//  * updatedAt: date, defaultValue: now [is this automatically added to the field]
  */
