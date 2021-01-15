@@ -13,7 +13,7 @@ const FieldType = db.define('FieldType', {
   },
   label: {
     type: DataTypes.STRING,
-
+    unique: true,
   }
 });
 

@@ -15,11 +15,12 @@ const Fields = db.define('Fields', {
   },
   label: {
     type: DataTypes.STRING,
-
+    unique: true,
   },
   isAqivahField: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
+    allowNull: false,
   }
 });
 

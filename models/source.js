@@ -2,13 +2,32 @@ const { DataTypes } = require('sequelize');
 const { db } = require('./index');
 
 const Source = db.define('Source', {
-  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-  label: { type: DataTypes.STRING },
-  url: { type: DataTypes.STRING },
-  isActive: { type: DataTypes.BOOLEAN, defaultValue: true },
-  createdAt: { type: DataTypes.NOW },
-  lastScrapedTime: { type: DataTypes.DATE },
-  paginationType: {type: DataTypes.ENUM}
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4, primaryKey: true
+  },
+  label: {
+    type: DataTypes.STRING,
+    unique: true,
+  },
+  url: {
+    type: DataTypes.STRING,
+    validate: {
+      isUrl: true,
+    },
+    unique: true,
+  },
+  isActive: {
+    type: DataTypes.BOOLEAN, defaultValue: true,
+    allowNull: false,
+  },
+  lastScrapedTime: {
+    type: DataTypes.DATE
+  },
+  paginationType: {
+    type: DataTypes.ENUM,
+    values: ['INFINITE', 'PAGED']
+  }
 });
 
 export default Source;

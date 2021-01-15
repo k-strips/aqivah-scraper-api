@@ -1,3 +1,7 @@
+const { DataTypes } = require('sequelize');
+const { db } = require('./index');
+const Property = require('./properties');
+const SourceField = require('./sourceFields');
 /**
  * id: uuid, defaultValue: uuidv4
  * propertyId: uuid, references properties.id
@@ -5,3 +9,35 @@
  * details: string
  * isDeleted: boolean, default: false
  */
+
+const PropertyDetails = db.define('PropertyDetails', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
+  },
+  propertyId: {
+    type: DataTypes.UUID,
+    references: {
+      model: Property,
+      key: 'id',
+    }
+  },
+  sourceFieldId: {
+    type: DataTypes.UUID,
+    references: {
+      model: SourceField,
+      key: 'id',
+    }
+  },
+  details: {
+    type: DataTypes.STRING,
+  },
+  isDeleted: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+  }
+});
+
+export default PropertyDetails;
