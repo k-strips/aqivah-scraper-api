@@ -13,7 +13,7 @@ const db = require('./models');
 
 
 
-// const sourceRoutes = require('./routes/sources');
+const sourceRoutes = require('./routes/sources');
 const fieldRoutes = require('./routes/fields');
 const scraperRoutes = require('./routes/scrapers');
 // const paginationTypeRoutes = require('./routes/paginationTypes');
@@ -39,7 +39,7 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-// app.use('/sources', sourceRoutes);
+app.use('/sources', sourceRoutes);
 app.use('/fields', fieldRoutes);
 app.use('/scrapers', scraperRoutes);
 // app.use('/pagination-types', paginationTypeRoutes);
