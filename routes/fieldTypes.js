@@ -1,13 +1,7 @@
 const express = require('express');
 const routes = express.Router();
-// const { getDb, initialize } = require('../db/db');
-// const { v4: uuid } = require('uuid');
-// const router = require('./fields');
-// const db = require('../db/db');
-// const db = require('../db/db');
 const { FieldType } = require('../models');
 
-// const db = getDb();
 
 routes.get('/', async (req, res) => {
 
