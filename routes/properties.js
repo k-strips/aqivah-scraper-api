@@ -8,12 +8,23 @@ const router = express.Router();
 // const { v4: uuid } = require('uuid');
 // const { createPropertyDetail } = require('../_models/properties');
 
-const { Property, PropertyDetail, ScraperSession } = require('../models');
+const { Property, PropertyDetail, ScraperSession, SourceField, Field, Source, FieldType } = require('../models');
 
 
 router.get('/', async (req, res) => {
   try {
-    const result = await Property.findAll({ include: [PropertyDetail, ScraperSession]});
+    const result = await Property.findAll({
+      include: [
+        {
+          model: PropertyDetail,
+          include: {
+            model: SourceField,
+            include: [Field, FieldType, Source]
+          }
+        },
+        ScraperSession
+      ]
+    });
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);

@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const data = require('./../data');
-// const { sequelize } = require('../index');
-const { getDb, initialize } = require('../db/db');
-const Source = require('../_models/sources');
-const { sources } = require('./../data');
+// const data = require('./../data');
+// // const { sequelize } = require('../index');
+// const { getDb, initialize } = require('../db/db');
+// // const Source = require('../_models/sources');
+// const { sources } = require('./../data');
+
+const { Source } = require('../models');
 // const sources = require('./../models/sources');
 
 router.get('/', (req, res) => {
