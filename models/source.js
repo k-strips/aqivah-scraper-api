@@ -30,21 +30,17 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
-      isActive: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
-        allowNull: false,
-      },
-      lastScrapedTime: DataTypes.DATE,
-      paginationType: DataTypes.ENUM("INFINITE", "PAGED"),
       validate: {
         isUrl: true,
       },
-
     },
-    isActive: DataTypes.BOOLEAN,
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+      allowNull: false,
+    },
     lastScrapedTime: DataTypes.DATE,
-    paginationType: DataTypes.ENUM('INFINITE', 'PAGED')
+    paginationType: DataTypes.ENUM("INFINITE", "PAGED"),
   }, {
     sequelize,
     modelName: 'Source',

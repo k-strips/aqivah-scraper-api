@@ -15,7 +15,7 @@ const db = require('./models');
 
 // const sourceRoutes = require('./routes/sources');
 const fieldRoutes = require('./routes/fields');
-// const scraperRoutes = require('./routes/scrapers');
+const scraperRoutes = require('./routes/scrapers');
 // const paginationTypeRoutes = require('./routes/paginationTypes');
 const propertyRoutes = require('./routes/properties');
 const fieldTypeRoutes = require('./routes/fieldTypes');
@@ -41,7 +41,7 @@ app.use((err, req, res, next) => {
 
 // app.use('/sources', sourceRoutes);
 app.use('/fields', fieldRoutes);
-// app.use('/scrapers', scraperRoutes);
+app.use('/scrapers', scraperRoutes);
 // app.use('/pagination-types', paginationTypeRoutes);
 app.use('/properties', propertyRoutes);
 app.use('/field-types', fieldTypeRoutes);
