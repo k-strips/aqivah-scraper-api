@@ -6,8 +6,6 @@ const { Field } = require('../models');
 
 
 router.get('/', async (req, res) => {
-  // const { id } = req.params || {};
-
   try {
     const fields = await Field.findAll();
     res.status(200).json(fields);
