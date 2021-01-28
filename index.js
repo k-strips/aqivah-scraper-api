@@ -18,7 +18,7 @@ const fieldRoutes = require('./routes/fields');
 // const scraperRoutes = require('./routes/scrapers');
 // const paginationTypeRoutes = require('./routes/paginationTypes');
 // const propertyRoutes = require('./routes/properties');
-// const fieldTypeRoutes = require('./routes/fieldTypes');
+const fieldTypeRoutes = require('./routes/fieldTypes');
 // const scrapingSessionRoutes = require('./routes/scrapingSessions');
 // const responser = require('@zarcobox/responser');
 
@@ -44,7 +44,7 @@ app.use('/fields', fieldRoutes);
 // app.use('/scrapers', scraperRoutes);
 // app.use('/pagination-types', paginationTypeRoutes);
 // app.use('/properties', propertyRoutes);
-// app.use('/field-types', fieldTypeRoutes);
+app.use('/field-types', fieldTypeRoutes);
 // app.use('/scraping-sessions', scrapingSessionRoutes);
 
 app.get('/', (req, res) => res.send('welcome to the aqivah api'));
