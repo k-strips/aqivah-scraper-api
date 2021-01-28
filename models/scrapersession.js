@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       allowNull: false,
     },
+    scraper: DataTypes.ENUM('NEW', 'UPDATE'),
     endedAt: DataTypes.DATE,
     resultMessage: DataTypes.STRING,
     result: DataTypes.ENUM('SUCCESS', 'FAILURE')
