@@ -1,8 +1,9 @@
 const bodyParser = require('body-parser');
 const cors = require('express-cors');
-const sqlite3 = require('sqlite3');
-
+// const sqlite3 = require('sqlite3');
+// const { sequelize } = require('./__models');
 const express = require('express');
+const db = require('./models');
 // const db = new sqlite3.Database(
 //   './db/data.db',
 //   (error) => {
@@ -12,14 +13,13 @@ const express = require('express');
 
 
 
-const sourceRoutes = require('./routes/sources');
+// const sourceRoutes = require('./routes/sources');
 const fieldRoutes = require('./routes/fields');
-const scraperRoutes = require('./routes/scrapers');
-const paginationTypeRoutes = require('./routes/paginationTypes');
-const propertyRoutes = require('./routes/properties');
-const fieldTypeRoutes = require('./routes/fieldTypes');
-const scrapingSessionRoutes = require('./routes/scrapingSessions');
-const { sequelize } = require('./models');
+// const scraperRoutes = require('./routes/scrapers');
+// const paginationTypeRoutes = require('./routes/paginationTypes');
+// const propertyRoutes = require('./routes/properties');
+// const fieldTypeRoutes = require('./routes/fieldTypes');
+// const scrapingSessionRoutes = require('./routes/scrapingSessions');
 // const responser = require('@zarcobox/responser');
 
 const app = express();
@@ -39,13 +39,13 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-app.use('/sources', sourceRoutes);
+// app.use('/sources', sourceRoutes);
 app.use('/fields', fieldRoutes);
-app.use('/scrapers', scraperRoutes);
-app.use('/pagination-types', paginationTypeRoutes);
-app.use('/properties', propertyRoutes);
-app.use('/field-types', fieldTypeRoutes);
-app.use('/scraping-sessions', scrapingSessionRoutes);
+// app.use('/scrapers', scraperRoutes);
+// app.use('/pagination-types', paginationTypeRoutes);
+// app.use('/properties', propertyRoutes);
+// app.use('/field-types', fieldTypeRoutes);
+// app.use('/scraping-sessions', scrapingSessionRoutes);
 
 app.get('/', (req, res) => res.send('welcome to the aqivah api'));
 
@@ -60,7 +60,7 @@ app.use((req, res, next) => {
 // });
 
 app.listen(PORT, async () => {
-  await sequelize.authenticate();
+  await db.sequelize.sync();
   console.log('listening on port ' + process.env.PORT || PORT);
 });
 

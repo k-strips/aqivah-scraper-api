@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const data = require('./../data');
-// const { db } = require('../index');
+// const { sequelize } = require('../index');
 const { getDb, initialize } = require('../db/db');
 const Source = require('../_models/sources');
 const { sources } = require('./../data');
