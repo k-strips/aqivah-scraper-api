@@ -40,11 +40,32 @@ router.get('/next', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { label, url, lastScrapedTime, isActive, paginationType } = req.body;
+  console.log('incoming from request -> ', req.body);
+
+  // {
+  //   startScraping: true,
+  //     name: 'The Ghana Home Loans Website',
+  //       url: 'http://theghanahomeloans.com',
+  //         singlePropertyQuerySelector: 'querySelect > querySelect',
+  //           sourceFields: [
+  //             {
+  //               id: 1,
+  //               name: 'bd8eda89-8a2e-4b0b-8a02-af748aa42d23',
+  //               type: '27faef8e-3cab-4451-8c1d-94072f26ce55',
+  //               querySelector: '.details-title',
+  //               isActive: true
+  //             }
+  //           ];
+  // }
+
+
+  const { name: label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, sourceFields, } = req.body;
+
+  const { type: typeId, name: FieldId, querySelector, isActive: fieldIsActive, isAqivahField } = sourceFields;
 
   try {
     const result = await Source.create({
-      label, url, lastScrapedTime, isActive, paginationType,
+      label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector,
     });
     res.status(201).json(result);
   } catch (error) {

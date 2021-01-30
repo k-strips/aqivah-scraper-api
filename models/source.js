@@ -41,6 +41,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     lastScrapedTime: DataTypes.DATE,
     paginationType: DataTypes.ENUM("INFINITE", "PAGED"),
+    singlePropertyQuerySelector: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Source',
