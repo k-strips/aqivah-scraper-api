@@ -6,7 +6,7 @@ const router = express.Router();
 // // const Source = require('../_models/sources');
 // const { sources } = require('./../data');
 
-const { Source } = require('../models');
+const { Source, SourceField, } = require('../models');
 // const sources = require('./../models/sources');
 
 router.get('/', async (req, res) => {
@@ -22,7 +22,7 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await Source.findByPK(id);
+    const result = await Source.findByPk(id, {include: SourceField});
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
