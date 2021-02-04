@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     selector: {
       type: DataTypes.STRING,
-      allowNull: false,
+      // allowNull: false,
     },
     isAqivahField: {
       type: DataTypes.BOOLEAN,
@@ -37,6 +37,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: false,
     },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+    }
   }, {
     sequelize,
     modelName: 'SourceField',

@@ -6,7 +6,8 @@ const router = express.Router();
 // // const Source = require('../_models/sources');
 // const { sources } = require('./../data');
 
-const { Source, SourceField, } = require('../models');
+const { Source, SourceField, Field, FieldType, } = require('../models');
+// const sourcefield = require('../models/sourcefield');
 // const sources = require('./../models/sources');
 
 router.get('/', async (req, res) => {
@@ -22,7 +23,7 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await Source.findByPk(id, {include: SourceField});
+    const result = await Source.findByPk(id, { include: SourceField });
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
@@ -42,35 +43,44 @@ router.get('/next', async (req, res) => {
 router.post('/', async (req, res) => {
   console.log('incoming from request -> ', req.body);
 
-  // {
-  //   startScraping: true,
-  //     name: 'The Ghana Home Loans Website',
-  //       url: 'http://theghanahomeloans.com',
-  //         singlePropertyQuerySelector: 'querySelect > querySelect',
-  //           sourceFields: [
-  //             {
-  //               id: 1,
-  //               name: 'bd8eda89-8a2e-4b0b-8a02-af748aa42d23',
-  //               type: '27faef8e-3cab-4451-8c1d-94072f26ce55',
-  //               querySelector: '.details-title',
-  //               isActive: true
-  //             }
-  //           ];
-  // }
-
-
   const { name: label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, sourceFields, } = req.body;
 
-  const { type: typeId, name: FieldId, querySelector, isActive: fieldIsActive, isAqivahField } = sourceFields;
-
   try {
-    const result = await Source.create({
-      label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector,
-    });
-    res.status(201).json(result);
+    const source = await Source.create({ label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, });
+
+    const SourceFields = await Promise.all(sourceFields.map(async each => {
+      try {
+        const { type: typeId, name: FieldId, querySelector: selector, isActive, isAqivahField } = each;
+
+        console.log('source field -> ', each);
+
+        const field = await Field.findByPk(FieldId);
+        const fieldType = await FieldType.findByPk(typeId);
+        const sourceField = await SourceField.create({
+          selector,
+        });
+        await sourceField.setField(field);
+        await sourceField.setFieldType(fieldType);
+        console.log('value of source field -> ', sourceField);
+
+        return sourceField;
+
+      } catch (error) {
+        console.error('failed to create source field -> ', error);
+        res.status(500).json(error);
+      }
+    }));
+
+    await source.addSourceFields(SourceFields);
+
+    console.log(source);
+    res.status(201).json(source);
+
   } catch (error) {
+    console.log('error -> ', error);
     res.status(500).json(error);
   }
+
 });
 
 router.patch('/:id', async (req, res) => {
