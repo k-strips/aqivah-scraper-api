@@ -85,13 +85,13 @@ router.post('/', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
   const { id } = req.params;
-  const { isActive, lastScrapedTime, paginationType, url, label } = req.body;
+  const { isActive, lastScrapedTime, paginationType, url, label, SourceFields } = req.body;
 
   try {
     const [_, result] = await Source.update({
       isActive, lastScrapedTime, paginationType, url, label,
     }, { where: { id }, returning: true, plain: true, });
-    res.status(200).jsson(result);
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
   }
