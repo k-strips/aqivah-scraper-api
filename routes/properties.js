@@ -46,33 +46,43 @@ router.post('/', async (req, res) => {
 
 router.post('/batch', async (req, res) => {
   /**properties should be an array */
-  const { properties } = req.body;
+  const { properties, sourceId, scraperSessionId } = req.body;
 
   console.log('properties created from scraping -> ', properties);
 
   try {
     //get the source fields of the source that's currently being scraped
+    const source = await Source.findByPk(sourceId, { include: { all: true, } });
 
     //for each property in the array, 
-    
-    //for each source field belonging to that source (where we got the property from)
-    
-    //attempt to get the values which were scraped for all the source fields
+    const propertiesList = await Promise.all(properties.map(async each => {
+      //for each source field belonging to that source (where we got the property from)
+      const { details, url } = each;
+      //create the property
+      const property = await Property.create({ url });
 
-    //create the propertyDetail for each of the values.
+      //attempt to get the values which were scraped for all the source fields
+      const detail = await Promise.all(source.SourceFields.map(async field => {
+        const fieldId = field.id;
+        const value = details[fieldId];
+        //create the propertyDetail for each of the values.
+        const propertyDetail = await PropertyDetail.create({ details: value, });
+        propertyDetail.setSourceField(field)
+        return propertyDetail;
+      }));
 
-    //create the property
-
-    //link the details to the correct property
-
-    //store the property in the db
+      //link the details to the correct property
+      property.setPropertyDetails(detail);
+      return property;
+    }));
 
     //return a successful response
 
 
-    const result = await Property.batchCreate(properties, { validate: true });
-    res.status(200).json(result);
+    // const result = await Property.batchCreate(properties, { validate: true });
+    res.status(200).json(propertiesList);
   } catch (error) {
+    console.log('failed to create scraped properties -> ', error);
     res.status(500).json(error);
   }
 });

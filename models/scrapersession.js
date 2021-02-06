@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate({ Property, Source, }) {
       // define association here
       this.hasMany(Property);
-      this.belongsTo(Source, { foreignKey: { allowNull: false } });
+      this.belongsTo(Source);
     }
   };
   ScraperSession.init({

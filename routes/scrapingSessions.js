@@ -26,12 +26,16 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   const { scraper, sourceId } = req.body;
 
+  console.log('incoming params -> ', { scraper, sourceId });
+
   try {
     const source = await Source.findByPk(sourceId);
 
-    const result = await ScraperSession.create({ scraper, Source: source, });
+    const result = await ScraperSession.create({ scraper,});
+    result.setSource(source);
     res.status(200).json(result);
   } catch (error) {
+    console.error('failed to create scraper session -> ', error);
     res.status(500).json(error);
   }
 });
