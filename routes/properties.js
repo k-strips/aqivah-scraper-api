@@ -14,16 +14,7 @@ const { Property, PropertyDetail, ScraperSession, SourceField, Field, Source, Fi
 router.get('/', async (req, res) => {
   try {
     const result = await Property.findAll({
-      include: [
-        {
-          model: PropertyDetail,
-          include: {
-            model: SourceField,
-            include: [Field, FieldType, Source]
-          }
-        },
-        ScraperSession
-      ]
+      include: { all: true, nested: true, }
     });
     res.status(200).json(result);
   } catch (error) {
@@ -57,7 +48,28 @@ router.post('/batch', async (req, res) => {
   /**properties should be an array */
   const { properties } = req.body;
 
+  console.log('properties created from scraping -> ', properties);
+
   try {
+    //get the source fields of the source that's currently being scraped
+
+    //for each property in the array, 
+    
+    //for each source field belonging to that source (where we got the property from)
+    
+    //attempt to get the values which were scraped for all the source fields
+
+    //create the propertyDetail for each of the values.
+
+    //create the property
+
+    //link the details to the correct property
+
+    //store the property in the db
+
+    //return a successful response
+
+
     const result = await Property.batchCreate(properties, { validate: true });
     res.status(200).json(result);
   } catch (error) {

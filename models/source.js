@@ -9,9 +9,10 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ SourceField }) {
+    static associate({ SourceField, ScraperSession }) {
       // define association here
       this.hasMany(SourceField);
+      this.hasMany(ScraperSession);
     }
   };
   Source.init({
@@ -39,9 +40,30 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: true,
       allowNull: false,
     },
-    lastScrapedTime: DataTypes.DATE,
-    paginationType: DataTypes.ENUM("INFINITE", "PAGED"),
-    singlePropertyQuerySelector: DataTypes.STRING,
+    lastScrapedTime: {
+      type: DataTypes.DATE,
+      defaultValue: new Date(0),
+      allowNull: false,
+    },
+    lastScrapedPage: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      allowNull: false,
+    },
+    paginationType: {
+      type: DataTypes.ENUM("INFINITE", "CLICK"),
+      defaultValue: "CLICK",
+      allowNull: false,
+    },
+    singlePropertyQuerySelector: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    clickPaginationSelector: {
+      type: DataTypes.STRING,
+
+    }
+
   }, {
     sequelize,
     modelName: 'Source',

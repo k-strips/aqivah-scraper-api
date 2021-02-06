@@ -12,33 +12,42 @@ const { Source, SourceField, Field, FieldType, } = require('../models');
 
 router.get('/', async (req, res) => {
   try {
-    const result = await Source.findAll();
+    const result = await Source.findAll({ include: { all: true,  } });
     res.status(200).json(result);
   } catch (error) {
+    console.error('error fetching sources -> ', error);
     res.status(500).json(error);
   }
+});
+
+
+router.get('/next', async (req, res) => {
+  try {
+    const result = await Source.findOne({
+      order: [['lastScrapedTime', 'ASC']],
+      include: { all: true,},
+    },
+    );
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('failed to get next source to scrape -> ', error);
+
+    res.status(500).json(error);
+  }
+
 });
 
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await Source.findByPk(id, { include: SourceField });
+    const result = await Source.findByPk(id, { include: {all: true, nested: true} });
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
   }
 });
 
-router.get('/next', async (req, res) => {
-  try {
-    const result = await Source.min('lastScrapedTime');
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json(error);
-  }
-
-});
 
 router.post('/', async (req, res) => {
   console.log('incoming from request -> ', req.body);

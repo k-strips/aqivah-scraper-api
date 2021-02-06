@@ -9,9 +9,10 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ Property }) {
+    static associate({ Property, Source, }) {
       // define association here
       this.hasMany(Property);
+      this.belongsTo(Source, { foreignKey: { allowNull: false } });
     }
   };
   ScraperSession.init({
