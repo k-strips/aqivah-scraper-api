@@ -67,7 +67,7 @@ router.post('/batch', async (req, res) => {
         const value = details[fieldId];
         //create the propertyDetail for each of the values.
         const propertyDetail = await PropertyDetail.create({ details: value, });
-        propertyDetail.setSourceField(field)
+        propertyDetail.setSourceField(field);
         return propertyDetail;
       }));
 
@@ -80,9 +80,21 @@ router.post('/batch', async (req, res) => {
 
 
     // const result = await Property.batchCreate(properties, { validate: true });
+
+    //set scraper session to successful end
+    await ScraperSession.update({
+      endedAt: new Date(),
+      result: 'SUCCESS',
+      resultMessage: "SUCCESS",
+    }, { where: { id: scraperSessionId } });
     res.status(200).json(propertiesList);
   } catch (error) {
     console.log('failed to create scraped properties -> ', error);
+    await ScraperSession.update({
+      endedAt: new Date(),
+      result: 'FAILURE',
+      resultMessage: JSON.stringify(error),
+    });
     res.status(500).json(error);
   }
 });
