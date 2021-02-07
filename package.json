@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "pm2 start index.js"
   },
   "dependencies": {
     "@zarcobox/responser": "^1.1.0",
@@ -22,3 +22,4 @@
     "nodemon": "^2.0.4"
   }
 }
+

@@ -13,7 +13,7 @@ const fieldTypeRoutes = require('./routes/fieldTypes');
 const scrapingSessionRoutes = require('./routes/scrapingSessions');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.port || 5000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -35,7 +35,7 @@ app.use('/properties', propertyRoutes);
 app.use('/field-types', fieldTypeRoutes);
 app.use('/scraper-sessions', scrapingSessionRoutes);
 
-app.get('/', (req, res) => res.send('welcome to the aqivah api'));
+app.get('/', (req, res) => res.status(200).send('welcome to the aqivah api'));
 
 //404
 app.use((req, res, next) => {
