@@ -2,92 +2,69 @@ const express = require('express');
 const router = express.Router();
 // const data = require('../data');
 const { getDb, initialize } = require('../db/db');
-const Fields = require('../models/fields');
+const { Field } = require('../models');
 
-const db = getDb();
 
-router.get('/', (req, res) => {
-  const { id } = req.params || {};
-
-  const query = `
-  SELECT id, label, isRequired, isAqivahField
-  FROM fields;`;
-
-  db.all(query, (err, rows) => {
-    if (err) {
-      res.status(500).json({ message: e });
-      return;
-    };
-    console.log('rows fetched for fields -> ', rows);
-    res.send(rows);
-
-  });
+router.get('/', async (req, res) => {
+  try {
+    const fields = await Field.findAll();
+    res.status(200).json(fields);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   const { id } = req.params || {};
 
-  if (!id) return res.status(400).send({ message: 'Missing ID' });
-
-  const query = `
-  SELECT 
-    id, label, isRequired, isAqivahField
-  FROM 
-    fields 
-  WHERE 
-    id = ?
-  ;
-  `;
-
-  db.all(query, [id], (err, rows) => {
-    if (err) {
-      res.status(500).json({ message: e });
-      return;
-    };
-    console.log('rows fetched for fields -> ', rows);
-    res.send(rows[0]);
-
-  });
+  try {
+    const field = await Field.findOne({ where: { id } });
+    res.status(200).json(field);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
-router.put('/:id', (req, res) => {
+
+router.patch('/:id', async (req, res) => {
   const id = req.params.id;
-  // const { label, isRequired, isAqivahField } = req.body;
-  const callback = (err, rows) => {
-    console.log('result of query -> ', { err, rows });
-    if (err) return res.status(400).send({ message: err || 'Failed to edit field' });
+  const { label, isAqivahField } = req.body;
 
-    res.status(200).send({ message: 'Success', data: rows });
-  };
+  try {
+    const [_, response] = await Field.update({ label, isAqivahField }, {
+      where: { id },
+      returning: true,
+      plain: true,
+    });
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 
-  Fields.edit({ id, ...req.body }, callback);
 });
 
 
-router.post('/', (req, res) => {
-  // const id = req.params.id;
-  // const { label, isRequired, isAqivahField } = req.body;
-  const callback = (err, rows) => {
-    console.log('result of query -> ', { err, rows });
-    if (err) return res.status(400).send({ message: err || 'Failed to create field' });
+router.post('/', async (req, res) => {
+  const { label, isAqivahField } = req.body || {};
 
-    res.status(201).send({ message: 'Success', data: rows });
-  };
+  try {
+    const field = await Field.create({ label, isAqivahField, });
+    res.status(201).json(field);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 
-  Fields.create(req.body, callback);
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 
-  const callback = (err, rows) => {
-    console.log('result of query to delete -> ', { err, rows });
-    if (err) return res.status(400).send({ message: err || 'Failed to delete.' });
-
-    res.status(200).send({ message: 'Success' });
-  };
-
-  Fields.remove(id, callback);
+  try {
+    const result = await Field.destroy({ where: { id }, });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
 module.exports = router;

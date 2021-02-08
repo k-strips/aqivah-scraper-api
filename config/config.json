@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "7Kyriosamb",
+    "database": "aqivah_scraper_dev",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "ec2-user",
+    "password": "7Kyriosamb",
+    "database": "aqivah-test",
+    "host": "aqivah-test.cwjqioxjtozn.us-east-2.rds.amazonaws.com",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}

@@ -1,116 +1,68 @@
 const express = require('express');
 const routes = express.Router();
-const { getDb, initialize } = require('../db/db');
-const { v4: uuid } = require('uuid');
-const router = require('./fields');
-// const db = require('../db/db');
-// const db = require('../db/db');
+const { FieldType } = require('../models');
 
-const db = getDb();
 
-routes.get('/', (req, res) => {
-  const query = `
-  SELECT id, label
-  FROM fieldTypes
-  `;
-  const db = getDb();
+routes.get('/', async (req, res) => {
 
-  db.all(query, (err, rows) => {
-    if (err) return error;
-    res.status(200).send({ message: 'Success', data: rows });
-  });
-});
-
-routes.post('/', (req, res) => {
-  const db = getDb();
-  const { name } = req.body;
-  console.log('incoming name -> ', name);
-  const id = uuid();
-  const query = `
-  INSERT INTO fieldTypes
-  (id, label)
-  VALUES
-  (?, ?)
-  `;
-  db.run(query, [id, name], (err) => {
-    if (err) {
-      console.log('error -> ', err);
-      res.sendStatus(400).send(err);
-      return;
-    };
-    res.send(name);
-  });
-  // res.send(name);
-});
-
-routes.get('/:id', (req, res) => {
-  console.log('request value -> ', req.params);
-  const id = req.params.id;
-  if (!id) {
-    res.status(400).send('No id provided');
-    return;
+  try {
+    const result = await FieldType.findAll();
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json(error);
   }
 
-  const query = `
-  SELECT id, label
-  FROM fieldTypes
-  WHERE id = ?
-  `;
-
-  db.each(query, [id], (error, result) => {
-    if (error) {
-      console.log('failed to retrieve row', error);
-      res.sendStatus(404);
-      return;
-    }
-    console.log('result of fetching field type with id -> ', result);
-    res.send(result);
-  });
-
 });
 
-routes.put('/:id', (req, res) => {
-  const id = req.params.id;
-  console.log('request body -> ', req);
+routes.post('/', async (req, res) => {
   const { label } = req.body;
-  console.log('value of label -> ', label);
 
-  const query = `
-  UPDATE 
-    fieldTypes
-  SET 
-    label = ? 
-  WHERE id = ?;
-  `;
+  try {
+    const result = await FieldType.create({ label });
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
 
-  console.log(query);
-  db.all(query, [label, id], (error, rows) => {
-    if (error) {
-      console.log('error updating field type -> ', error);
-      return res.send(error);
-    }
+routes.get('/:id', async (req, res) => {
+  const { id } = req.params || {};
 
-    console.log('result of update -> ', rows);
-    res.send('success');
-  });
+  try {
+    const result = await FieldType.findOne({ where: { id } });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+
+});
+
+routes.patch('/:id', async (req, res) => {
+  const id = req.params.id;
+  const { label } = req.body;
+
+  try {
+    const [_, result] = await FieldType.update({ label }, {
+      where: { id },
+      returning: true,
+      plain: true,
+    });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
 
-routes.delete('/:id', (req, res) => {
+routes.delete('/:id', async (req, res) => {
   const { id } = req.params;
-  const query = `
-  DELETE FROM fieldTypes
-  WHERE id = ?;
-  `;
-  db.run(query, [id], (error, rows) => {
-    console.log({ error, rows });
-    if (error) {
-      console.log('error deleting field type -> ', error);
-      return res.sendStatus(404);
-    }
-    console.log('result of deletion -> ', rows);
-    res.sendStatus(204);
-  });
+
+  try {
+    const result = await FieldType.destroy({ where: { id } });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
 module.exports = routes;

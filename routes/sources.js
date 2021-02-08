@@ -1,136 +1,122 @@
 const express = require('express');
 const router = express.Router();
-const data = require('./../data');
-// const { db } = require('../index');
-const { getDb, initialize } = require('../db/db');
-const Source = require('./../models/sources');
-const { sources } = require('./../data');
+// const data = require('./../data');
+// // const { sequelize } = require('../index');
+// const { getDb, initialize } = require('../db/db');
+// // const Source = require('../_models/sources');
+// const { sources } = require('./../data');
+
+const { Source, SourceField, Field, FieldType, } = require('../models');
+// const sourcefield = require('../models/sourcefield');
 // const sources = require('./../models/sources');
 
-router.get('/', (req, res) => {
-  const db = getDb();
-  console.log("req.body", req.query);
-  const requestOptions = {
-    getNextSource: 'getNextSource',
-  };
-
-  let response = 'Invalid request';
-
-  if (req.query.request === requestOptions.getNextSource) {
-    console.log('called api /sources with req getnextsource');
-    response = getNextSource();
-    return res.status(201).send(response);
+router.get('/', async (req, res) => {
+  try {
+    const result = await Source.findAll({ include: { all: true,  } });
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('error fetching sources -> ', error);
+    res.status(500).json(error);
   }
-
-  if (!req.query.request) {
-    // const query = `
-    //   SELECT
-    //     sources.id,
-    //     sources.label,
-    //     sources.uri,
-    //     sources.isActive,
-    //     sources.createdAt,
-    //     sources.lastScrapedTime,
-    //     sources.paginationTypeId AS paginationType
-    //   FROM
-    //     sources,
-    //     paginationTypes
-    //   WHERE paginationTypes.id = sources.paginationTypeId
-    // ;
-    // `;
-    // db.all(query, (err, rows) => {
-    //   if (err) return res.status(500).send({ message: 'Something went wrong' });
-    //   // console.log('results of fetching sources -> ', rows);
-    //   res.status(200).send(rows);
-    // });
-    // response = data.sources;
-    const callback = (err, rows) => {
-      console.log('results of query -> ', { err, rows });
-
-      if (err) {
-        console.log('error -> ', err);
-        return res.status(500).send({ message: err || 'Something went wrong' });
-      }
-
-
-      res.status(200).send({ message: 'Success', data: rows });
-    };
-    Source.list(callback);
-  }
-  // res.send(response);
 });
 
-router.get('/next', (req, res) => {
-  const callback = (err, rows) => {
-    console.log('result of fetching next source -> ', { err, rows });
-    if (err) return res.status(500).send({ message: err || 'Something went wrong', data: err });
 
-    return res.status(200).send({ message: 'Success', data: rows });
-  };
+router.get('/next', async (req, res) => {
+  try {
+    const result = await Source.findOne({
+      order: [['lastScrapedTime', 'ASC']],
+      include: { all: true,},
+    },
+    );
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('failed to get next source to scrape -> ', error);
 
-  const callbackToGetSourceFields = (err, rows) => {
-    if (err) {
-      console.log('error -> ', err);
-      res.status(500).send({ message: err || 'Unable to get source details' });
-      return;
-    }
+    res.status(500).json(error);
+  }
 
-    const source = rows[0];
-    console.log('fetched source. now getting fields -> ', source);
-    Source.getSourceFieldsBySource(source.id, (err, rows) => {
-      console.log('after getting fields -> ', { err, rows });
-      const data = { ...source, fields: rows };
-      callback(err, data);
-    });
-  };
-
-
-  Source.getNextToScrape(callbackToGetSourceFields);
 });
 
-router.post('/', (req, res) => {
-  console.log('received source -> ', JSON.stringify(req.body));
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
 
   try {
-    const callback = (err, rows) => {
-      console.log('any errors? -> ', err);
-      console.log('any values? -> ', rows);
-      if (err) {
-        res.status(400).send({ message: err });
-        return;
-      }
-
-      res.status(201).send({ message: 'Success' });
-    };
-    Source.create(req.body, callback);
-  } catch (e) {
-    console.log('error thrown -> ', e);
-    res.status(400).send({ message: e.message || 'Something went wrong' });
+    const result = await Source.findByPk(id, { include: {all: true, nested: true} });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 
-router.delete('/:id', (req, res) => {
+
+router.post('/', async (req, res) => {
+  console.log('incoming from request -> ', req.body);
+
+  const { name: label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, sourceFields, } = req.body;
+
+  try {
+    const source = await Source.create({ label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, });
+
+    const SourceFields = await Promise.all(sourceFields.map(async each => {
+      try {
+        const { type: typeId, name: FieldId, querySelector: selector, isActive, isAqivahField } = each;
+
+        console.log('source field -> ', each);
+
+        const field = await Field.findByPk(FieldId);
+        const fieldType = await FieldType.findByPk(typeId);
+        const sourceField = await SourceField.create({
+          selector,
+        });
+        await sourceField.setField(field);
+        await sourceField.setFieldType(fieldType);
+        console.log('value of source field -> ', sourceField);
+
+        return sourceField;
+
+      } catch (error) {
+        console.error('failed to create source field -> ', error);
+        res.status(500).json(error);
+      }
+    }));
+
+    await source.addSourceFields(SourceFields);
+
+    console.log(source);
+    res.status(201).json(source);
+
+  } catch (error) {
+    console.log('error -> ', error);
+    res.status(500).json(error);
+  }
+
+});
+
+router.patch('/:id', async (req, res) => {
   const { id } = req.params;
-  if (!id) return res.status(400).send({ message: 'No ID passed' });
+  const { isActive, lastScrapedTime, paginationType, url, label, SourceFields } = req.body;
 
-  const callback = (err, rows) => {
-    console.log('result of deleting source -> ', { err, rows });
-    if (err) return res.status(400).send({ message: err || 'Unable to delete the source. Something went wrong' });
+  try {
+    const [_, result] = await Source.update({
+      isActive, lastScrapedTime, paginationType, url, label,
+    }, { where: { id }, returning: true, plain: true, });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
 
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
 
+  if (!id) return res.status(400).json({ message: 'No ID passed' });
 
-    res.status(200).send({ message: rows || 'Success' });
-  };
-
-  Source.remove(id, callback);
+  try {
+    const result = await Source.destroy({ where: { id } });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
 module.exports = router;
-
-
-function getNextSource() {
-  Source.getNextToScrape();
-  return;
-  console.log('source to use -> ', data.sources[2]);
-  return data.sources[2];
-}

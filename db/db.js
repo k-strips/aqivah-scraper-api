@@ -1,8 +1,20 @@
 const sqlite = require('sqlite3');
+const { Sequelize } = require('sequelize');
+
+const postgres = 'postgres://postgres:7Kyriosamb@localhost:5432/aqivah-scraper';
+const sequelize = new Sequelize(postgres);
+
 
 let db = null;
 
-function initialize() {
+async function initialize() {
+  try {
+    await sequelize.authenticate();
+    console.log('Connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+
   db = new sqlite.Database('./db/data.db',
     (error) => {
 
