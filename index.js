@@ -22,11 +22,7 @@ app.use(function(req, res, next) {
 });
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors({
-  allowedOrigins: [
-    '*/*',
-  ]
-}));
+app.use(cors());
 
 //close db connection on error
 app.use((err, req, res, next) => {
