@@ -26,7 +26,7 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await Property.findOne({ where: { id } });
+    const result = await Property.findOne({ where: { id }, include: { all: true, nested: true, } });
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);

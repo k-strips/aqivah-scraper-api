@@ -1,0 +1,8 @@
+meqasa apartments for rent in Accra
+
+single property query selector - .mqs-prop-image-wrapper > a
+
+url -> https://meqasa.com/apartments-for-rent-in-Accra
+
+title field query selector -> .top-details-wrapper h1
+

@@ -5,13 +5,22 @@ const router = express.Router();
 const { ScraperSession, Source, } = require('../models');
 
 router.get('/', async (req, res) => {
+  const { scraper } = req.query;
+
+  if (scraper && scraper !== 'NEW' && scraper !== 'UPDATE') {
+    return res.status(400).json({
+      message: 'scraper value must either be empty, NEW or UPDATE',
+    });
+  }
+
   try {
-    const result = await ScraperSession.findAll({ include: { all: true, } });
+    const result = await ScraperSession.findAll({ include: { all: true, }, where: { scraper } });
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
   }
 });
+
 
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
@@ -31,7 +40,7 @@ router.post('/', async (req, res) => {
   try {
     const source = await Source.findByPk(sourceId);
 
-    const result = await ScraperSession.create({ scraper,});
+    const result = await ScraperSession.create({ scraper, });
     result.setSource(source);
     res.status(200).json(result);
   } catch (error) {
