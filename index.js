@@ -16,14 +16,14 @@ const app = express();
 const PORT = process.env.port || 5000;
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 //close db connection on error
-app.use((err, req, res, next) => {
-  db.close();
-  next(err);
-});
+// app.use((err, req, res, next) => {
+//   db.close();
+//   next(err);
+// });
 
 app.use('/sources', sourceRoutes);
 app.use('/fields', fieldRoutes);
