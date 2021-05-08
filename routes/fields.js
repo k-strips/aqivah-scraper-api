@@ -28,10 +28,10 @@ router.get('/:id', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
   const id = req.params.id;
-  const { label, isAqivahField } = req.body;
+  const { label, isAqivahField, isRequired } = req.body;
 
   try {
-    const [_, response] = await Field.update({ label, isAqivahField }, {
+    const [_, response] = await Field.update({ label, isAqivahField, isRequired }, {
       where: { id },
       returning: true,
       plain: true,
@@ -45,10 +45,10 @@ router.patch('/:id', async (req, res) => {
 
 
 router.post('/', async (req, res) => {
-  const { label, isAqivahField } = req.body || {};
+  const { label, isAqivahField, isRequired } = req.body || {};
 
   try {
-    const field = await Field.create({ label, isAqivahField, });
+    const field = await Field.create({ label, isAqivahField, isRequired });
     res.status(201).json(field);
   } catch (error) {
     res.status(500).json(error);

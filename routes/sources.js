@@ -41,7 +41,7 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await Source.findByPk(id, { include: {all: true, nested: true} });
+    const result = await Source.findByPk(id, { include: {all: true, nested: false} });
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
@@ -52,10 +52,10 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   console.log('incoming from request -> ', req.body);
 
-  const { name: label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, sourceFields, } = req.body;
+  const { label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, sourceFields,clickPaginationSelector } = req.body;
 
   try {
-    const source = await Source.create({ label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, });
+    const source = await Source.create({ label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, clickPaginationSelector});
 
     const SourceFields = await Promise.all(sourceFields.map(async each => {
       try {
@@ -67,6 +67,7 @@ router.post('/', async (req, res) => {
         const fieldType = await FieldType.findByPk(typeId);
         const sourceField = await SourceField.create({
           selector,
+          // isActive,
         });
         await sourceField.setField(field);
         await sourceField.setFieldType(fieldType);

@@ -17,11 +17,7 @@ const PORT = process.env.port || 5000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors({
-  allowedOrigins: [
-    '*/*',
-  ]
-}));
+app.use(cors());
 
 //close db connection on error
 app.use((err, req, res, next) => {
@@ -49,7 +45,7 @@ app.use((req, res, next) => {
 
 app.listen(PORT, async () => {
   // await db.sequelize.sync({force:true});
-  await db.sequelize.sync();
+  await db.sequelize.sync({ alter: true });
   console.log('listening on port ' + PORT);
 });
 

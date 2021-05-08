@@ -6,3 +6,4 @@ url -> https://meqasa.com/apartments-for-rent-in-Accra
 
 title field query selector -> .top-details-wrapper h1
 
+clickPaginationSelector -> #pagenumnext
