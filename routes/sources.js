@@ -12,7 +12,7 @@ const { Source, SourceField, Field, FieldType, } = require('../models');
 
 router.get('/', async (req, res) => {
   try {
-    const result = await Source.findAll({ include: { all: true,  } });
+    const result = await Source.findAll({ include: { all: true, } });
     res.status(200).json(result);
   } catch (error) {
     console.error('error fetching sources -> ', error);
@@ -25,23 +25,21 @@ router.get('/next', async (req, res) => {
   try {
     const result = await Source.findOne({
       order: [['lastScrapedTime', 'ASC']],
-      include: { all: true,},
-    },
-    );
+      include: [{ model: SourceField, include: { model: FieldType } }],
+    });
     res.status(200).json(result);
   } catch (error) {
     console.error('failed to get next source to scrape -> ', error);
 
     res.status(500).json(error);
   }
-
 });
 
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await Source.findByPk(id, { include: {all: true, nested: false} });
+    const result = await Source.findByPk(id, { include: { all: true, nested: false } });
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
@@ -52,10 +50,10 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   console.log('incoming from request -> ', req.body);
 
-  const { label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, sourceFields,clickPaginationSelector } = req.body;
+  const { label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, sourceFields, clickPaginationSelector } = req.body;
 
   try {
-    const source = await Source.create({ label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, clickPaginationSelector});
+    const source = await Source.create({ label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, clickPaginationSelector });
 
     const SourceFields = await Promise.all(sourceFields.map(async each => {
       try {
@@ -95,14 +93,41 @@ router.post('/', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
   const { id } = req.params;
-  const { isActive, lastScrapedTime, paginationType, url, label, SourceFields } = req.body;
+  const { isActive, lastScrapedTime, paginationType, url, label, sourceFields } = req.body;
 
   try {
     const [_, result] = await Source.update({
       isActive, lastScrapedTime, paginationType, url, label,
     }, { where: { id }, returning: true, plain: true, });
+
+    const source = await Source.findOne({ where: { id } });
+    // for each sourceField, create/update it
+    const finalSourceFields = await Promise.all(sourceFields.map(async each => {
+      const { selector, type, field: fieldId, isActive, id } = each;
+
+      const field = await Field.findByPk(fieldId);
+      const fieldType = await FieldType.findByPk(type);
+
+      const value = await SourceField.upsert({ selector, id });
+      const sourceField = value[0];
+      console.log('value of source field -> ', sourceField);
+
+      await sourceField.setField(field);
+      await sourceField.setFieldType(fieldType);
+
+      return sourceField;
+    }, { returning: true, }));
+
+    // set the sourceFields to the current list of sourceFields
+    console.log('value of final sourceFields -> ', finalSourceFields);
+
+    await source.setSourceFields(finalSourceFields);
+    console.log('value of source -> ', source);
+
+
     res.status(200).json(result);
   } catch (error) {
+    console.log('error occurred while updating source -> ', error);
     res.status(500).json(error);
   }
 });

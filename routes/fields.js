@@ -21,6 +21,7 @@ router.get('/:id', async (req, res) => {
     const field = await Field.findOne({ where: { id } });
     res.status(200).json(field);
   } catch (error) {
+    console.error('failed to get field -> ', error);
     res.status(500).json(error);
   }
 });
@@ -40,7 +41,6 @@ router.patch('/:id', async (req, res) => {
   } catch (error) {
     res.status(500).json(error);
   }
-
 });
 
 
