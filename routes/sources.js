@@ -93,11 +93,11 @@ router.post('/', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
   const { id } = req.params;
-  const { isActive, lastScrapedTime, paginationType, url, label, sourceFields } = req.body;
+  const { isActive, paginationType, url, label, sourceFields } = req.body;
 
   try {
     const [_, result] = await Source.update({
-      isActive, lastScrapedTime, paginationType, url, label,
+      isActive, paginationType, url, label,
     }, { where: { id }, returning: true, plain: true, });
 
     const source = await Source.findOne({ where: { id } });
@@ -108,12 +108,14 @@ router.patch('/:id', async (req, res) => {
       const field = await Field.findByPk(fieldId);
       const fieldType = await FieldType.findByPk(type);
 
-      const value = await SourceField.upsert({ selector, id });
+      const value = await SourceField.upsert({ selector, id, isActive });
       const sourceField = value[0];
       console.log('value of source field -> ', sourceField);
 
-      await sourceField.setField(field);
-      await sourceField.setFieldType(fieldType);
+      field && await sourceField.setField(field);
+      fieldType && await sourceField.setFieldType(fieldType);
+
+      console.log('\n updated source field -> ', sourceField);
 
       return sourceField;
     }, { returning: true, }));
