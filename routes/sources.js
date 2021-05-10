@@ -57,7 +57,7 @@ router.post('/', async (req, res) => {
 
     const SourceFields = await Promise.all(sourceFields.map(async each => {
       try {
-        const { type: typeId, name: FieldId, querySelector: selector, isActive, isAqivahField } = each;
+        const { type: typeId, name: FieldId, querySelector: selector, isActive, } = each;
 
         console.log('source field -> ', each);
 
@@ -65,7 +65,7 @@ router.post('/', async (req, res) => {
         const fieldType = await FieldType.findByPk(typeId);
         const sourceField = await SourceField.create({
           selector,
-          // isActive,
+          isActive,
         });
         await sourceField.setField(field);
         await sourceField.setFieldType(fieldType);

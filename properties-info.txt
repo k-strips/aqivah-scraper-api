@@ -7,3 +7,20 @@ url -> https://meqasa.com/apartments-for-rent-in-Accra
 title field query selector -> .top-details-wrapper h1
 
 clickPaginationSelector -> #pagenumnext
+
+
+--- 
+brollghana
+name: brollghana residential properties for sale in ghana
+url: https://www.brollghana.com/results/residential/for-sale/accra/all/
+isActive: yes
+paginationtype: click
+click pagination query selector: .icon-arrow-right
+single property query selector : .property-list-details a
+
+field details
+-
+field: title
+fieldType: text
+query selector: #page-heading
+isActive: yes
