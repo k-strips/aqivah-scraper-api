@@ -52,6 +52,9 @@ router.post('/batch', async (req, res) => {
   try {
     //get the source fields of the source that's currently being scraped
     const source = await Source.findByPk(sourceId, { include: { all: true, } });
+    await Source.update({
+      lastScrapedTime: new Date(),
+    });
 
     //for each property in the array, 
     const propertiesList = await Promise.all(properties.map(async each => {
