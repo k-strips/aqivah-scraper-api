@@ -54,7 +54,8 @@ router.post('/batch', async (req, res) => {
     const source = await Source.findByPk(sourceId, { include: { all: true, } });
     await Source.update({
       lastScrapedTime: new Date(),
-    });
+      lastScrapedPage: parseInt(source.lastScrapedPage) + 1,
+    }, { where: { id: sourceId } });
 
     //for each property in the array, 
     const propertiesList = await Promise.all(properties.map(async each => {
