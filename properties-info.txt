@@ -1,26 +1,35 @@
-meqasa apartments for rent in Accra
-
-single property query selector - .mqs-prop-image-wrapper > a
-
-url -> https://meqasa.com/apartments-for-rent-in-Accra
-
-title field query selector -> .top-details-wrapper h1
-
-clickPaginationSelector -> #pagenumnext
+field types
+- text
+- image
 
 
---- 
-brollghana
-name: brollghana residential properties for sale in ghana
-url: https://www.brollghana.com/results/residential/for-sale/accra/all/
-isActive: yes
-paginationtype: click
-click pagination query selector: .icon-arrow-right
-single property query selector : .property-list-details a
+fields
+- name: title, isAqivahField: true, isRequired: true,
+- name: price, isAqivahFieild: true, isRequired: true,
+- name: image, isAqivahField: true, isRequired: true,
 
-field details
--
-field: title
-fieldType: text
-query selector: #page-heading
-isActive: yes
+
+sources
+- - name:meqasa apartments for rnet in accra 
+  - url: https://meqasa.com/apartments-for-rent-in-Accra
+  - isActive: true,
+  - pagination type: click
+  - click pagination query selector: #pagenumnext
+  - single property query selector .mqs-prop-image-wrapper > a
+  - field details
+    - field: image, field type: image, query selector: ".w img"
+    - field: title, field type: text,  query selector: ".top-details-wrapper h1"
+    - field: price, field type: text,  query selector: ".price"
+
+
+- - name: brollghana residential properties for sale in ghana
+  - url: https://www.brollghana.com/results/residential/for-sale/accra/all/
+  - isActive: true,
+  - pagination type: click
+  - click pagination query selector: .icon-arrow-right
+  - single page query selector : .property-list-details a
+  - field details
+    - field: image, field type: image, query selector: .thumbnail.loader img
+    - field: number of bedrooms, field type: text, query selector: .test
+    - field: title, field type: text, query selector: #page-heading
+
