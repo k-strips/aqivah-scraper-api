@@ -19,5 +19,5 @@
     "database": "aqivah-test",
     "host": "aqivah-test.cwjqioxjtozn.us-east-2.rds.amazonaws.com",
     "dialect": "postgres"
-  },
+  }
 }
