@@ -14,10 +14,10 @@
     "dialect": "postgres"
   },
   "production": {
-    "username": "root",
-    "password": null,
+    "username": "ec2-user",
+    "password": "7Kyriosamb",
     "database": "aqivah-test",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
-  }
+    "host": "aqivah-test.cwjqioxjtozn.us-east-2.rds.amazonaws.com",
+    "dialect": "postgres"
+  },
 }
