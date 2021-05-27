@@ -44,9 +44,12 @@ app.use((req, res, next) => {
 // });
 
 app.listen(PORT, async () => {
-  // await db.sequelize.sync({force:true});
-  await db.sequelize.sync({ alter: true });
-  console.log('listening on port ' + PORT);
+  try {
+    // await db.sequelize.sync({ force: true, });
+    console.log('listening on port ' + PORT);
+  } catch (e) {
+    console.log('error while connecting to db -> ', e);
+  }
 });
 
 // module.exports.db = db;

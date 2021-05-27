@@ -61,7 +61,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     clickPaginationSelector: {
       type: DataTypes.STRING,
-
     }
 
   }, {

@@ -7,7 +7,10 @@ const { Field } = require('../models');
 
 router.get('/', async (req, res) => {
   try {
-    const fields = await Field.findAll();
+    const { required: isRequired } = req.query;
+    const fields = isRequired
+      ? await Field.findAll({ where: { isRequired } })
+      : await Field.findAll();
     res.status(200).json(fields);
   } catch (error) {
     res.status(500).json(error);

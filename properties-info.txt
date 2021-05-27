@@ -10,7 +10,7 @@ fields
 
 
 sources
-- - name:meqasa apartments for rnet in accra 
+- - name: meqasa apartments for rent in accra 
   - url: https://meqasa.com/apartments-for-rent-in-Accra
   - isActive: true,
   - pagination type: click
