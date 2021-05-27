@@ -106,12 +106,12 @@ router.patch('/:id', async (req, res) => {
     const source = await Source.findOne({ where: { id } });
     // for each sourceField, create/update it
     const finalSourceFields = await Promise.all(sourceFields.map(async each => {
-      const { selector, type, field: fieldId, isActive, id } = each;
+      const { selector, type, field: fieldId, isActive, id, defaultValue,} = each;
 
       const field = await Field.findByPk(fieldId);
       const fieldType = await FieldType.findByPk(type);
 
-      const value = await SourceField.upsert({ selector, id, isActive });
+      const value = await SourceField.upsert({ selector, id, isActive,defaultValue, });
       const sourceField = value[0];
       console.log('value of source field -> ', sourceField);
 
