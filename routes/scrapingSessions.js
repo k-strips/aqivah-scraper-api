@@ -53,12 +53,16 @@ router.post('/', async (req, res) => {
 router.patch('/markAsFailed/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { error } = req.body;
+    const { error, sourceId } = req.body;
     const [_, result] = await ScraperSession.update({
       result: 'FAILURE',
       resultMessage: error.toString(),
       endedAt: new Date(),
     }, { where: { id }, returning: true, plain: true, });
+    await Source.update({
+      lastScrapedTime: new Date(),
+    },
+      { where: { id: sourceId } });
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
