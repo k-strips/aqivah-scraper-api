@@ -11,13 +11,19 @@
     "password": "7Kyriosamb",
     "database": "aqivah-test",
     "host": "aqivah-test.cwjqioxjtozn.us-east-2.rds.amazonaws.com",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "dialectOptions": {
+      "connectionTimeout": 60000
+    }
   },
   "production": {
     "username": "ec2-user",
     "password": "7Kyriosamb",
     "database": "aqivah-test",
     "host": "aqivah-test.cwjqioxjtozn.us-east-2.rds.amazonaws.com",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "dialectOptions": {
+      "connectionTimeout": 60000
+    }
   }
 }
