@@ -50,14 +50,14 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   console.log('incoming from request -> ', req.body);
 
-  const { label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, sourceFields, clickPaginationSelector } = req.body;
+  const { label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, sourceFields, clickPaginationSelector,} = req.body;
 
   try {
     const source = await Source.create({ label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, clickPaginationSelector });
 
     const SourceFields = await Promise.all(sourceFields.map(async each => {
       try {
-        const { type: typeId, name: FieldId, querySelector: selector, isActive, isRequired} = each;
+        const { type: typeId, name: FieldId, querySelector: selector, isActive, isRequired, defaultValue,} = each;
 
         console.log('source field -> ', each);
 
@@ -67,6 +67,7 @@ router.post('/', async (req, res) => {
           selector,
           isActive,
           isRequired,
+          defaultValue,
         });
         await sourceField.setField(field);
         await sourceField.setFieldType(fieldType);
