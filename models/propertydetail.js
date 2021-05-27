@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     details: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
     },
     isDeleted: {
       type: DataTypes.BOOLEAN,

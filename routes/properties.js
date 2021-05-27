@@ -26,7 +26,7 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await Property.findOne({ where: { id } });
+    const result = await Property.findOne({ where: { id }, include: { all: true, nested: true, } });
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
@@ -48,45 +48,57 @@ router.post('/batch', async (req, res) => {
   /**properties should be an array */
   const { properties, sourceId, scraperSessionId } = req.body;
 
-  console.log('properties created from scraping -> ', properties);
 
   try {
     //get the source fields of the source that's currently being scraped
     const source = await Source.findByPk(sourceId, { include: { all: true, } });
+    await Source.update({
+      lastScrapedTime: new Date(),
+      lastScrapedPage: parseInt(source.lastScrapedPage) + 1,
+    }, { where: { id: sourceId } });
 
     //for each property in the array, 
     const propertiesList = await Promise.all(properties.map(async each => {
       //for each source field belonging to that source (where we got the property from)
+
       const { details, url } = each;
       //create the property
-      const property = await Property.create({ url });
+      const property = await Property.create({ url }).catch(e => console.log(e));
 
       //attempt to get the values which were scraped for all the source fields
+      console.log(`\n source fields -> `, source.SourceFields);
+
       const detail = await Promise.all(source.SourceFields.map(async field => {
         const fieldId = field.id;
         const value = details[fieldId];
         //create the propertyDetail for each of the values.
-        const propertyDetail = await PropertyDetail.create({ details: value, });
-        propertyDetail.setSourceField(field);
+        const propertyDetail = await PropertyDetail.create({ details: value, }).catch(e => { console.log(e); });
+
+        await propertyDetail.setSourceField(field).catch(e => console.log(e));
         return propertyDetail;
       }));
 
       //link the details to the correct property
-      property.setPropertyDetails(detail);
+      property && await property.setPropertyDetails(detail).catch(e => console.log(e));
       return property;
     }));
-
+    console.log('\n created properties -> ', propertiesList);
     //return a successful response
 
 
     // const result = await Property.batchCreate(properties, { validate: true });
 
     //set scraper session to successful end
-    await ScraperSession.update({
+    const [_, scraperSession] = await ScraperSession.update({
       endedAt: new Date(),
       result: 'SUCCESS',
       resultMessage: "SUCCESS",
-    }, { where: { id: scraperSessionId } });
+    }, { where: { id: scraperSessionId }, returning: true, }).catch(e => console.log(e));
+
+    console.log('scraper session -> ', scraperSession);
+
+    await scraperSession[0].setProperties(propertiesList).catch(e => console.log(e));
+
     res.status(200).json(propertiesList);
   } catch (error) {
     console.log('failed to create scraped properties -> ', error);
@@ -94,7 +106,7 @@ router.post('/batch', async (req, res) => {
       endedAt: new Date(),
       result: 'FAILURE',
       resultMessage: JSON.stringify(error),
-    });
+    }, { where: { id: scraperSessionId } });
     res.status(500).json(error);
   }
 });
