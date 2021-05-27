@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     isActive: {
       type: DataTypes.BOOLEAN,
-      defaultValue: true,
+      // defaultValue: true,
       allowNull: false,
     },
     lastScrapedTime: {
@@ -61,7 +61,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     clickPaginationSelector: {
       type: DataTypes.STRING,
-
     }
 
   }, {

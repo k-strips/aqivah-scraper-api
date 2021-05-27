@@ -21,14 +21,14 @@ const PORT = process.env.port || 5000;
 //   next();
 // });
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 //close db connection on error
-app.use((err, req, res, next) => {
-  db.close();
-  next(err);
-});
+// app.use((err, req, res, next) => {
+//   db.close();
+//   next(err);
+// });
 
 app.use('/sources', sourceRoutes);
 app.use('/fields', fieldRoutes);
@@ -49,9 +49,12 @@ app.use((req, res, next) => {
 // });
 
 app.listen(PORT, async () => {
-  // await db.sequelize.sync({force:true});
-  await db.sequelize.sync();
-  console.log('listening on port ' + process.env.PORT || PORT);
+  try {
+    // await db.sequelize.sync({ force: true, });
+    console.log('listening on port ' + PORT);
+  } catch (e) {
+    console.log('error while connecting to db -> ', e);
+  }
 });
 
 // module.exports.db = db;
