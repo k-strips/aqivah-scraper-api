@@ -25,6 +25,7 @@ router.get('/next', async (req, res) => {
   try {
     const result = await Source.findOne({
       order: [['lastScrapedTime', 'ASC']],
+      where: { isActive: true, },
       include: [{ model: SourceField, include: { model: FieldType } }],
     });
     res.status(200).json(result);
@@ -50,14 +51,14 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   console.log('incoming from request -> ', req.body);
 
-  const { label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, sourceFields, clickPaginationSelector,} = req.body;
+  const { label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, sourceFields, clickPaginationSelector, } = req.body;
 
   try {
     const source = await Source.create({ label, url, lastScrapedTime, isActive, paginationType, singlePropertyQuerySelector, clickPaginationSelector });
 
     const SourceFields = await Promise.all(sourceFields.map(async each => {
       try {
-        const { type: typeId, name: FieldId, querySelector: selector, isActive, isRequired, defaultValue,} = each;
+        const { type: typeId, name: FieldId, querySelector: selector, isActive, isRequired, defaultValue, } = each;
 
         console.log('source field -> ', each);
 
