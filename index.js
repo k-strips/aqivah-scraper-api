@@ -13,7 +13,7 @@ const fieldTypeRoutes = require('./routes/fieldTypes');
 const scrapingSessionRoutes = require('./routes/scrapingSessions');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 
 // app.use(function(req, res, next) {
 //   res.header("Access-Control-Allow-Origin", "*");
@@ -56,7 +56,7 @@ app.listen(PORT, async () => {
     await db.sequelize.sync({ 
 	//    force: true, 
     });
-    console.log('listening on port ' + PORT);
+ console.log('listening on port ' + PORT);
   } catch (e) {
     console.log('error while connecting to db -> ', e);
   }
