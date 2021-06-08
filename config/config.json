@@ -7,9 +7,9 @@
     "dialect": "postgres"
   },
   "test": {
-    "username": "ec2-user",
+    "username": "postgres",
     "password": "7Kyriosamb",
-    "database": "aqivah-test",
+    "database": "postgres",
     "host": "aqivah-test.cwjqioxjtozn.us-east-2.rds.amazonaws.com",
     "dialect": "postgres",
     "dialectOptions": {
