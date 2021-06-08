@@ -4,6 +4,24 @@ field types
 
 
 fields
+required fields
+- price
+    - currency
+    - value
+- images (list of strings)
+- id
+- owner
+    - name
+    - phone
+    - email
+- title
+- type (string)
+- acquisition type (purchase or rent)
+- location
+    - region
+    - town
+    - city
+
 - name: title, isAqivahField: true, isRequired: true,
 - name: price, isAqivahFieild: true, isRequired: true,
 - name: image, isAqivahField: true, isRequired: true,
@@ -21,6 +39,30 @@ sources
     - field: title, field type: text,  query selector: ".top-details-wrapper h1"
     - field: price, field type: text,  query selector: ".price"
 
+    - price
+    - currency
+    - value
+- images (list of strings)
+- id
+- owner
+    - name
+    - phone
+    - email
+- title
+- type (string)
+- acquisition type (purchase or rent)
+- location
+    - region
+    - town
+    - city
+
+- name: title, isAqivahField: true, isRequired: true,
+- name: price, isAqivahFieild: true, isRequired: true,
+- name: image, isAqivahField: true, isRequired: true,
+
+
+---------------------------------------------------
+
 
 - - name: brollghana residential properties for sale in ghana
   - url: https://www.brollghana.com/results/residential/for-sale/accra/all/
@@ -32,4 +74,25 @@ sources
     - field: image, field type: image, query selector: .thumbnail.loader img
     - field: number of bedrooms, field type: text, query selector: .test
     - field: title, field type: text, query selector: #page-heading
+
+    - price
+    - currency
+    - value
+- images (list of strings)
+- id
+- owner
+    - name
+    - phone
+    - email
+- title
+- type (string)
+- acquisition type (purchase or rent)
+- location
+    - region
+    - town
+    - city
+
+- name: title, isAqivahField: true, isRequired: true,
+- name: price, isAqivahFieild: true, isRequired: true,
+- name: image, isAqivahField: true, isRequired: true,
 
