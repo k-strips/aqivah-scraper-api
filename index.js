@@ -1,16 +1,15 @@
-const bodyParser = require('body-parser');
-const cors = require('express-cors');
+const bodyParser = require("body-parser");
+const cors = require("express-cors");
 // const sqlite3 = require('sqlite3');
 // const { sequelize } = require('./__models');
-const express = require('express');
-const db = require('./models');
+const express = require("express");
+const db = require("./models");
 
-
-const sourceRoutes = require('./routes/sources');
-const fieldRoutes = require('./routes/fields');
-const propertyRoutes = require('./routes/properties');
-const fieldTypeRoutes = require('./routes/fieldTypes');
-const scrapingSessionRoutes = require('./routes/scrapingSessions');
+const sourceRoutes = require("./routes/sources");
+const fieldRoutes = require("./routes/fields");
+const propertyRoutes = require("./routes/properties");
+const fieldTypeRoutes = require("./routes/fieldTypes");
+const scrapingSessionRoutes = require("./routes/scrapingSessions");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -31,15 +30,15 @@ app.use(bodyParser.json());
 //   next(err);
 // });
 
-app.options('*', cors({credentials: true}))
+app.options("*", cors({ credentials: true }));
 
-app.use('/sources', sourceRoutes);
-app.use('/fields', fieldRoutes);
-app.use('/properties', propertyRoutes);
-app.use('/field-types', fieldTypeRoutes);
-app.use('/scraper-sessions', scrapingSessionRoutes);
+app.use("/sources", sourceRoutes);
+app.use("/fields", fieldRoutes);
+app.use("/properties", propertyRoutes);
+app.use("/field-types", fieldTypeRoutes);
+app.use("/scraper-sessions", scrapingSessionRoutes);
 
-app.get('/', (req, res) => res.status(200).send('welcome to the aqivah api'));
+app.get("/", (req, res) => res.status(200).send("welcome to the aqivah api"));
 
 //404
 app.use((req, res, next) => {
@@ -53,15 +52,14 @@ app.use((req, res, next) => {
 
 app.listen(PORT, async () => {
   try {
-    await db.sequelize.sync({ 
-	//    alter: true, 
+    await db.sequelize.sync({
+      //    alter: true,
     });
- console.log('listening on port ' + PORT);
+    console.log("listening on port " + PORT);
   } catch (e) {
-    console.log('error while connecting to db -> ', e);
+    console.log("error while connecting to db -> ", e);
   }
 });
 
 // module.exports.db = db;
 module.exports.db = db;
-
