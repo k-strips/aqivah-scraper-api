@@ -1,6 +1,4 @@
-
-
-exports.getNextSource = db => {
+exports.getNextSource = (db) => {
   //get the source with the earliest 'lastScraped' date
   const query = `
   SELECT sources.id, sources.url, sources.paginationTypeId, paginationTypes.id,  MIN(sources.lastScrapedTime), sourceFields.sourceId 

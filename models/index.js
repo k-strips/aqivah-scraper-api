@@ -32,6 +32,8 @@ const sequelize = new Sequelize(
   config
 );
 
+// console.log(config.database);
+
 fs.readdirSync(__dirname)
   .filter((file) => {
     return (
