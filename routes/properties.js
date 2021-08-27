@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 // const data = require('./../data');
 // const propertyResults = require('./../db/propertyResults');
@@ -8,13 +8,20 @@ const router = express.Router();
 // const { v4: uuid } = require('uuid');
 // const { createPropertyDetail } = require('../_models/properties');
 
-const { Property, PropertyDetail, ScraperSession, SourceField, Field, Source, FieldType } = require('../models');
+const {
+  Property,
+  PropertyDetail,
+  ScraperSession,
+  SourceField,
+  Field,
+  Source,
+  FieldType,
+} = require("../models");
 
-
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const result = await Property.findAll({
-      include: { all: true, nested: true, }
+      include: { all: true, nested: true },
     });
     res.status(200).json(result);
   } catch (error) {
@@ -22,18 +29,21 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await Property.findOne({ where: { id }, include: { all: true, nested: true, } });
+    const result = await Property.findOne({
+      where: { id },
+      include: { all: true, nested: true },
+    });
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
   }
 });
 
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   const { url } = req.body;
 
   try {
@@ -44,91 +54,117 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.post('/batch', async (req, res) => {
+router.post("/batch", async (req, res) => {
   /**properties should be an array */
   const { properties, sourceId, scraperSessionId } = req.body;
 
-
   try {
     //get the source fields of the source that's currently being scraped
-    const source = await Source.findByPk(sourceId, { include: { all: true, } });
-    await Source.update({
-      lastScrapedTime: new Date(),
-      lastScrapedPage: parseInt(source.lastScrapedPage) + 1,
-    }, { where: { id: sourceId } });
+    const source = await Source.findByPk(sourceId, { include: { all: true } });
+    await Source.update(
+      {
+        lastScrapedTime: new Date(),
+        lastScrapedPage: parseInt(source.lastScrapedPage) + 1,
+      },
+      { where: { id: sourceId } }
+    );
 
-    //for each property in the array, 
-    const propertiesList = await Promise.all(properties.map(async each => {
-      //for each source field belonging to that source (where we got the property from)
+    //for each property in the array,
+    const propertiesList = await Promise.all(
+      properties.map(async (each) => {
+        //for each source field belonging to that source (where we got the property from)
 
-      const { details, url } = each;
-      //create the property
-      const property = await Property.create({ url }).catch(e => console.log(e));
+        const { details, url } = each;
+        //create the property
+        const property = await Property.create({ url }).catch((e) =>
+          console.log(e)
+        );
 
-      //attempt to get the values which were scraped for all the source fields
-      console.log(`\n source fields -> `, source.SourceFields);
+        //attempt to get the values which were scraped for all the source fields
+        console.log(`\n source fields -> `, source.SourceFields);
 
-      const detail = await Promise.all(source.SourceFields.map(async field => {
-        const fieldId = field.id;
-        const value = details[fieldId];
-        //create the propertyDetail for each of the values.
-        const propertyDetail = await PropertyDetail.create({ details: value, }).catch(e => { console.log(e); });
+        const detail = await Promise.all(
+          source.SourceFields.map(async (field) => {
+            const fieldId = field.id;
+            const value = details[fieldId];
+            //create the propertyDetail for each of the values.
+            const propertyDetail = await PropertyDetail.create({
+              details: value,
+            }).catch((e) => {
+              console.log(e);
+            });
 
-        await propertyDetail.setSourceField(field).catch(e => console.log(e));
-        return propertyDetail;
-      }));
+            await propertyDetail
+              .setSourceField(field)
+              .catch((e) => console.log(e));
+            return propertyDetail;
+          })
+        );
 
-      //link the details to the correct property
-      property && await property.setPropertyDetails(detail).catch(e => console.log(e));
-      return property;
-    }));
-    console.log('\n created properties -> ', propertiesList);
+        //link the details to the correct property
+        property &&
+          (await property
+            .setPropertyDetails(detail)
+            .catch((e) => console.log(e)));
+        return property;
+      })
+    );
+    console.log("\n created properties -> ", propertiesList);
     //return a successful response
-
 
     // const result = await Property.batchCreate(properties, { validate: true });
 
     //set scraper session to successful end
-    const [_, scraperSession] = await ScraperSession.update({
-      endedAt: new Date(),
-      result: 'SUCCESS',
-      resultMessage: "SUCCESS",
-    }, { where: { id: scraperSessionId }, returning: true, }).catch(e => console.log(e));
+    const [_, scraperSession] = await ScraperSession.update(
+      {
+        endedAt: new Date(),
+        result: "SUCCESS",
+        resultMessage: "SUCCESS",
+      },
+      { where: { id: scraperSessionId }, returning: true }
+    ).catch((e) => console.log(e));
 
-    console.log('scraper session -> ', scraperSession);
+    console.log("scraper session -> ", scraperSession);
 
-    await scraperSession[0].setProperties(propertiesList).catch(e => console.log(e));
+    await scraperSession[0]
+      .setProperties(propertiesList)
+      .catch((e) => console.log(e));
 
     res.status(200).json(propertiesList);
   } catch (error) {
-    console.log('failed to create scraped properties -> ', error);
-    await ScraperSession.update({
-      endedAt: new Date(),
-      result: 'FAILURE',
-      resultMessage: JSON.stringify(error),
-    }, { where: { id: scraperSessionId } });
+    console.log("failed to create scraped properties -> ", error);
+    await ScraperSession.update(
+      {
+        endedAt: new Date(),
+        result: "FAILURE",
+        resultMessage: JSON.stringify(error),
+      },
+      { where: { id: scraperSessionId } }
+    );
     res.status(500).json(error);
   }
 });
 
-router.patch('/:id', async (req, res) => {
+router.patch("/:id", async (req, res) => {
   const { id } = req.params;
   const { url, ScraperSessionId } = req.body;
 
   try {
-    const [_, result] = await Property.update({ url, ScraperSessionId }, {
-      where: { id },
-      returning: true,
-      plain: true,
-    });
+    const [_, result] = await Property.update(
+      { url, ScraperSessionId },
+      {
+        where: { id },
+        returning: true,
+        plain: true,
+      }
+    );
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
   }
-
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -138,7 +174,6 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json(error);
   }
 });
-
 
 // function createNewProperty(params) {
 //   const db = getDb();
@@ -191,7 +226,7 @@ router.delete('/:id', async (req, res) => {
 //   });
 
 //   console.log('created properties -> ', propertiesWithIds);
-//   // then create the entries in the property details 
+//   // then create the entries in the property details
 
 //   propertiesWithIds.some(each => {
 //     const { sourceFieldId, details, propertyId } = each;
@@ -207,7 +242,7 @@ router.delete('/:id', async (req, res) => {
 // });
 
 // router.get('/', (req, res) => {
-//   //get the scraper session whose properties you want to show. if there's no scraper session, then return paginated list of all 
+//   //get the scraper session whose properties you want to show. if there's no scraper session, then return paginated list of all
 //   const { sessionId } = req.query;
 //   console.log('incoming session id -> ', { sessionId, body: req.body, req, });
 //   const callback = (err, rows) => {
@@ -220,8 +255,6 @@ router.delete('/:id', async (req, res) => {
 //   Properties.listPropertiesBySessionId(sessionId, callback);
 
 // });
-
-
 
 // router.get('/:id/details', (req, res) => {
 //   const { id } = req.params;
@@ -241,8 +274,8 @@ router.delete('/:id', async (req, res) => {
 // router.post('/batch', (req, res) => {
 //   // means it's coming from the scraper, in this format:
 //   /** {
-//    * id, 
-//    * scraperSessionId, 
+//    * id,
+//    * scraperSessionId,
 //    * properties: {
 //    *  [id]: {id, sourceFieldId: details, uri: ' }
 //    * }} */
@@ -268,6 +301,5 @@ router.delete('/:id', async (req, res) => {
 //   Properties.batchCreate(scraperSessionId, properties, callbackToCreatePropertyDetails);
 
 // });
-
 
 module.exports = router;
