@@ -1,20 +1,31 @@
-const express = require('express');
+const express = require("express");
 const routes = express.Router();
-const { FieldType } = require('../models');
+const { FieldType } = require("../models");
 
+routes.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  if (req.method == "OPTIONS") {
+    res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
+    return res.status(200).json({});
+  }
 
-routes.get('/', async (req, res) => {
+  next();
+});
 
+routes.get("/", async (req, res) => {
   try {
     const result = await FieldType.findAll();
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
   }
-
 });
 
-routes.post('/', async (req, res) => {
+routes.post("/", async (req, res) => {
   const { label } = req.body;
 
   try {
@@ -25,7 +36,7 @@ routes.post('/', async (req, res) => {
   }
 });
 
-routes.get('/:id', async (req, res) => {
+routes.get("/:id", async (req, res) => {
   const { id } = req.params || {};
 
   try {
@@ -34,27 +45,28 @@ routes.get('/:id', async (req, res) => {
   } catch (error) {
     res.status(500).json(error);
   }
-
 });
 
-routes.patch('/:id', async (req, res) => {
+routes.patch("/:id", async (req, res) => {
   const id = req.params.id;
   const { label } = req.body;
 
   try {
-    const [_, result] = await FieldType.update({ label }, {
-      where: { id },
-      returning: true,
-      plain: true,
-    });
+    const [_, result] = await FieldType.update(
+      { label },
+      {
+        where: { id },
+        returning: true,
+        plain: true,
+      }
+    );
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
   }
 });
 
-
-routes.delete('/:id', async (req, res) => {
+routes.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
