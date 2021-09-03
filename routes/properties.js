@@ -14,7 +14,8 @@ const { Property, PropertyDetail, ScraperSession, SourceField, Field, Source, Fi
 router.get('/', async (req, res) => {
   try {
     const result = await Property.findAll({
-      include: { all: true, nested: true, }
+      include: { all: true, nested: true, },
+      limit: 5,
     });
     res.status(200).json(result);
   } catch (error) {
