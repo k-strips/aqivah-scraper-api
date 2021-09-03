@@ -22,16 +22,20 @@ const PORT = process.env.PORT || 5000;
 // });
 app.use(cors());
 app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(cors());
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  if (req.method == "OPTIONS") {
+    res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
+    return res.status(200).json({});
+  }
+  next();
+})
 
-//close db connection on error
-// app.use((err, req, res, next) => {
-//   db.close();
-//   next(err);
-// });
-
-app.options('*', cors({credentials: true}))
+app.options('*', cors({ credentials: true }))
 
 app.use('/sources', sourceRoutes);
 app.use('/fields', fieldRoutes);
@@ -53,10 +57,10 @@ app.use((req, res, next) => {
 
 app.listen(PORT, async () => {
   try {
-    await db.sequelize.sync({ 
-	//    alter: true, 
+    await db.sequelize.sync({
+      //    alter: true, 
     });
- console.log('listening on port ' + PORT);
+    console.log('listening on port ' + PORT);
   } catch (e) {
     console.log('error while connecting to db -> ', e);
   }
