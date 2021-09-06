@@ -17,16 +17,35 @@ const {
   Source,
   FieldType,
 } = require("../models");
+
 const resolveCors = require("../middlewares/resolveCors");
+const APIFeatures = require("../utils/apiFeatures");
 
 router.use(resolveCors);
 
 router.get("/", async (req, res) => {
   try {
-    const result = await Property.findAll({
-      include: { all: true, nested: true },
+    const appendFeatures = new APIFeatures(
+      Property,
+      req.query
+    ).filterAndPaginate();
+
+    const page = appendFeatures.page;
+
+    const properties = await appendFeatures.query;
+    const totalResults = await Property.findAll();
+
+    res.status(200).json({
+      status: "success",
+      page,
+      perPage: properties.length,
+      nextPage: `https://${req.get("host")}/properties?page=${page + 1}`,
+      prevPage: `https://${req.get("host")}/properties?page=${page - 1}`,
+      totalResults: totalResults.length,
+      data: {
+        properties,
+      },
     });
-    res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
   }

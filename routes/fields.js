@@ -4,16 +4,33 @@ const router = express.Router();
 const { getDb, initialize } = require("../db/db");
 const { Field } = require("../models");
 const resolveCors = require("../middlewares/resolveCors");
+const APIFeatures = require("../utils/apiFeatures");
 
 router.use(resolveCors);
 
 router.get("/", async (req, res) => {
   try {
-    const { required: isRequired } = req.query;
-    const fields = isRequired
-      ? await Field.findAll({ where: { isRequired } })
-      : await Field.findAll();
-    res.status(200).json(fields);
+    const appendFeatures = new APIFeatures(
+      Field,
+      req.query
+    ).filterAndPaginate();
+
+    const page = appendFeatures.page;
+
+    const fields = await appendFeatures.query;
+    const totalResults = await Field.findAll();
+
+    res.status(200).json({
+      status: "success",
+      page,
+      perPage: fields.length,
+      nextPage: `https://${req.get("host")}/fields?page=${page + 1}`,
+      prevPage: `https://${req.get("host")}/fields?page=${page - 1}`,
+      totalResults: totalResults.length,
+      data: {
+        fields,
+      },
+    });
   } catch (error) {
     res.status(500).json(error);
   }

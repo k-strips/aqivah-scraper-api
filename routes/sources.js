@@ -10,13 +10,33 @@ const { Source, SourceField, Field, FieldType } = require("../models");
 // const sourcefield = require('../models/sourcefield');
 // const sources = require('./../models/sources');
 const resolveCors = require("../middlewares/resolveCors");
+const APIFeatures = require("../utils/apiFeatures");
 
 router.use(resolveCors);
 
 router.get("/", async (req, res) => {
   try {
-    const result = await Source.findAll({ include: { all: true } });
-    res.status(200).json(result);
+    const appendFeatures = new APIFeatures(
+      Source,
+      req.query
+    ).filterAndPaginate();
+
+    const page = appendFeatures.page;
+
+    const sources = await appendFeatures.query;
+    const totalResults = await Source.findAll();
+
+    res.status(200).json({
+      status: "success",
+      page,
+      perPage: sources.length,
+      nextPage: `https://${req.get("host")}/sources?page=${page + 1}`,
+      prevPage: `https://${req.get("host")}/sources?page=${page - 1}`,
+      totalResults: totalResults.length,
+      data: {
+        sources,
+      },
+    });
   } catch (error) {
     console.error("error fetching sources -> ", error);
     res.status(500).json(error);

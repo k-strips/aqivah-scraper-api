@@ -2,13 +2,33 @@ const express = require("express");
 const routes = express.Router();
 const { FieldType } = require("../models");
 const resolveCors = require("../middlewares/resolveCors");
+const APIFeatures = require("../utils/apiFeatures");
 
 routes.use(resolveCors);
 
 routes.get("/", async (req, res) => {
   try {
-    const result = await FieldType.findAll();
-    res.status(200).json(result);
+    const appendFeatures = new APIFeatures(
+      FieldType,
+      req.query
+    ).filterAndPaginate();
+
+    const page = appendFeatures.page;
+
+    const fieldType = await appendFeatures.query;
+    const totalResults = await FieldType.findAll();
+
+    res.status(200).json({
+      status: "success",
+      page,
+      perPage: fieldType.length,
+      nextPage: `https://${req.get("host")}/field-types?page=${page + 1}`,
+      prevPage: `https://${req.get("host")}/field-types?page=${page - 1}`,
+      totalResults: totalResults.length,
+      data: {
+        fieldType,
+      },
+    });
   } catch (error) {
     res.status(500).json(error);
   }
