@@ -3,20 +3,9 @@ const router = express.Router();
 
 // const { getDb } = require('../db/db');
 const { ScraperSession, Source, Property } = require('../models');
+const resolveCors = require("../middlewares/resolveCors");
 
-router.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  if (req.method == "OPTIONS") {
-    res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
-    return res.status(200).json({});
-  }
-
-  next();
-});
+router.use(resolveCors);
 
 router.get('/', async (req, res) => {
   const { scraper } = req.query;
