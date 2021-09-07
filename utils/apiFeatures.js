@@ -10,7 +10,10 @@ class APIFeatures {
     const excludedFields = ["page", "sort", "limit", "fields", "role"];
     excludedFields.forEach((el) => delete queryObj[el]);
 
-    console.log(queryObj);
+    if (queryObj.required) {
+      queryObj.isRequired = queryObj.required;
+      delete queryObj.required;
+    }
 
     // Pagination
     const limitNum = 5;
