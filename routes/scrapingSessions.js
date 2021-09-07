@@ -25,19 +25,17 @@ router.get("/", async (req, res) => {
 
     const page = appendFeatures.page;
 
-    const scraperSessions = await appendFeatures.query;
+    const data = await appendFeatures.query;
     const totalResults = await ScraperSession.findAll();
 
     res.status(200).json({
       status: "success",
       page,
-      perPage: scraperSessions.length,
+      perPage: data.length,
       nextPage: `https://${req.get("host")}/scraper-sessions?page=${page + 1}`,
       prevPage: `https://${req.get("host")}/scraper-sessions?page=${page - 1}`,
       totalResults: totalResults.length,
-      data: {
-        scraperSessions,
-      },
+      data,
     });
   } catch (error) {
     res.status(500).json(error);

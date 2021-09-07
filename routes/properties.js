@@ -32,19 +32,17 @@ router.get("/", async (req, res) => {
 
     const page = appendFeatures.page;
 
-    const properties = await appendFeatures.query;
+    const data = await appendFeatures.query;
     const totalResults = await Property.findAll();
 
     res.status(200).json({
       status: "success",
       page,
-      perPage: properties.length,
+      perPage: data.length,
       nextPage: `https://${req.get("host")}/properties?page=${page + 1}`,
       prevPage: `https://${req.get("host")}/properties?page=${page - 1}`,
       totalResults: totalResults.length,
-      data: {
-        properties,
-      },
+      data,
     });
   } catch (error) {
     res.status(500).json(error);

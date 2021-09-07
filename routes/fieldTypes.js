@@ -15,19 +15,17 @@ routes.get("/", async (req, res) => {
 
     const page = appendFeatures.page;
 
-    const fieldType = await appendFeatures.query;
+    const data = await appendFeatures.query;
     const totalResults = await FieldType.findAll();
 
     res.status(200).json({
       status: "success",
       page,
-      perPage: fieldType.length,
+      perPage: data.length,
       nextPage: `https://${req.get("host")}/field-types?page=${page + 1}`,
       prevPage: `https://${req.get("host")}/field-types?page=${page - 1}`,
       totalResults: totalResults.length,
-      data: {
-        fieldType,
-      },
+      data,
     });
   } catch (error) {
     res.status(500).json(error);

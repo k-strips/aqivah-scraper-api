@@ -23,19 +23,17 @@ router.get("/", async (req, res) => {
 
     const page = appendFeatures.page;
 
-    const sources = await appendFeatures.query;
+    const data = await appendFeatures.query;
     const totalResults = await Source.findAll();
 
     res.status(200).json({
       status: "success",
       page,
-      perPage: sources.length,
+      perPage: data.length,
       nextPage: `https://${req.get("host")}/sources?page=${page + 1}`,
       prevPage: `https://${req.get("host")}/sources?page=${page - 1}`,
       totalResults: totalResults.length,
-      data: {
-        sources,
-      },
+      data,
     });
   } catch (error) {
     console.error("error fetching sources -> ", error);
