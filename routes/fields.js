@@ -23,8 +23,6 @@ router.get("/", async (req, res) => {
     res.status(200).json({
       page,
       perPage: data.length,
-      nextPage: `https://${req.get("host")}/fields?page=${page + 1}`,
-      prevPage: `https://${req.get("host")}/fields?page=${page - 1}`,
       totalResults: totalResults.length,
       data,
     });

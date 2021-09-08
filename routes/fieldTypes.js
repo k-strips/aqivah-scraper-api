@@ -22,8 +22,6 @@ routes.get("/", async (req, res) => {
       status: "success",
       page,
       perPage: data.length,
-      nextPage: `https://${req.get("host")}/field-types?page=${page + 1}`,
-      prevPage: `https://${req.get("host")}/field-types?page=${page - 1}`,
       totalResults: totalResults.length,
       data,
     });
