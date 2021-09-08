@@ -16,7 +16,7 @@ class APIFeatures {
     }
 
     // Pagination
-    const limitNum = 20;
+    const limitNum = 10;
     const page = this.queryString.page * 1 || 1;
     const limit = this.queryString.limit * 1 || limitNum;
     const skip = (page - 1) * limit;
