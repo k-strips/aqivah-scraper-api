@@ -31,10 +31,10 @@ routes.get("/", async (req, res) => {
 });
 
 routes.post("/", async (req, res) => {
-  const { label } = req.body;
+  const { label, isRequired } = req.body;
 
   try {
-    const result = await FieldType.create({ label });
+    const result = await FieldType.create({ label, isRequired });
     res.status(201).json(result);
   } catch (error) {
     res.status(500).json(error);
