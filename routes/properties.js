@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
   try {
     const result = await Property.findAll({
       include: { all: true, nested: true, },
-      limit: 5,
+      limit: 1,
     });
     res.status(200).json(result);
   } catch (error) {
