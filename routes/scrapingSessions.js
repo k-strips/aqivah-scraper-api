@@ -1,104 +1,118 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
 // const { getDb } = require('../db/db');
-const { ScraperSession, Source, Property } = require('../models');
+const { ScraperSession, Source, Property } = require("../models");
+const resolveCors = require("../middlewares/resolveCors");
+const APIFeatures = require("../utils/apiFeatures");
 
-router.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  if (req.method == "OPTIONS") {
-    res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
-    return res.status(200).json({});
-  }
+router.use(resolveCors);
 
-  next();
-});
-
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   const { scraper } = req.query;
 
-  if (scraper && scraper !== 'NEW' && scraper !== 'UPDATE') {
+  if (scraper && scraper !== "NEW" && scraper !== "UPDATE") {
     return res.status(400).json({
-      message: 'scraper value must either be empty, NEW or UPDATE',
+      message: "scraper value must either be empty, NEW or UPDATE",
     });
   }
 
   try {
-    const result = await ScraperSession.findAll({ include: { all: true, }, where: { scraper } });
-    res.status(200).json(result);
+    const appendFeatures = new APIFeatures(
+      ScraperSession,
+      req.query
+    ).filterAndPaginate();
+
+    const page = appendFeatures.page;
+
+    const data = await appendFeatures.query;
+    const totalResults = await ScraperSession.findAll();
+
+    res.status(200).json({
+      status: "success",
+      page,
+      perPage: data.length,
+      totalResults: totalResults.length,
+      data,
+    });
   } catch (error) {
     res.status(500).json(error);
   }
 });
 
-
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await ScraperSession.findOne({ where: { id }, include: [{ model: Property }] });
+    const result = await ScraperSession.findOne({
+      where: { id },
+      include: [{ model: Property }],
+    });
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
   }
 });
 
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   const { scraper, sourceId } = req.body;
 
-  console.log('incoming params -> ', { scraper, sourceId });
+  console.log("incoming params -> ", { scraper, sourceId });
 
   try {
     const source = await Source.findByPk(sourceId);
 
-    const result = await ScraperSession.create({ scraper, });
+    const result = await ScraperSession.create({ scraper });
     result.setSource(source);
     res.status(200).json(result);
   } catch (error) {
-    console.error('failed to create scraper session -> ', error);
+    console.error("failed to create scraper session -> ", error);
     res.status(500).json(error);
   }
 });
 
-
-router.patch('/markAsFailed/:id', async (req, res) => {
+router.patch("/markAsFailed/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { error, sourceId } = req.body;
-    const [_, result] = await ScraperSession.update({
-      result: 'FAILURE',
-      resultMessage: error.toString(),
-      endedAt: new Date(),
-    }, { where: { id }, returning: true, plain: true, });
-    await Source.update({
-      lastScrapedTime: new Date(),
-    },
-      { where: { id: sourceId } });
+    const [_, result] = await ScraperSession.update(
+      {
+        result: "FAILURE",
+        resultMessage: error.toString(),
+        endedAt: new Date(),
+      },
+      { where: { id }, returning: true, plain: true }
+    );
+    await Source.update(
+      {
+        lastScrapedTime: new Date(),
+      },
+      { where: { id: sourceId } }
+    );
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
   }
 });
 
-router.patch('/:id', async (req, res) => {
+router.patch("/:id", async (req, res) => {
   const { id } = req.params;
   const { scraper } = req.body;
   try {
-    const [_, result] = await ScraperSession.update({ scraper }, {
-      where: { id },
-      returning: true,
-      plain: true,
-    });
+    const [_, result] = await ScraperSession.update(
+      { scraper },
+      {
+        where: { id },
+        returning: true,
+        plain: true,
+      }
+    );
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const result = await ScraperSession.destroy({ where: { id } });
@@ -107,6 +121,5 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json(error);
   }
 });
-
 
 module.exports = router;

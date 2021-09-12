@@ -53,7 +53,7 @@ app.use((req, res, next) => {
 app.listen(PORT, async () => {
   try {
     await db.sequelize.sync({
-      //    alter: true,
+      // alter: true,
     });
     console.log("listening on port " + PORT);
   } catch (e) {

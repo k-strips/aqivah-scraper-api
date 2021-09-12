@@ -3,28 +3,29 @@ const router = express.Router();
 // const data = require('../data');
 const { getDb, initialize } = require("../db/db");
 const { Field } = require("../models");
+const resolveCors = require("../middlewares/resolveCors");
+const APIFeatures = require("../utils/apiFeatures");
 
-router.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  if (req.method == "OPTIONS") {
-    res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
-    return res.status(200).json({});
-  }
-
-  next();
-});
+router.use(resolveCors);
 
 router.get("/", async (req, res) => {
   try {
-    const { required: isRequired } = req.query;
-    const fields = isRequired
-      ? await Field.findAll({ where: { isRequired } })
-      : await Field.findAll();
-    res.status(200).json(fields);
+    const appendFeatures = new APIFeatures(
+      Field,
+      req.query
+    ).filterAndPaginate();
+
+    const page = appendFeatures.page;
+
+    const data = await appendFeatures.query;
+    const totalResults = await Field.findAll();
+
+    res.status(200).json({
+      page,
+      perPage: data.length,
+      totalResults: totalResults.length,
+      data,
+    });
   } catch (error) {
     res.status(500).json(error);
   }
