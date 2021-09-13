@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate({ SourceField }) {
-      // define association here
+      // define association here...
       this.hasMany(SourceField);
     }
   }
@@ -22,11 +22,6 @@ module.exports = (sequelize, DataTypes) => {
       label: {
         type: DataTypes.STRING,
         unique: true,
-      },
-      isRequired: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
       },
     },
     {
