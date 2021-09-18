@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class PropertyDetail extends Model {
     /**
@@ -14,25 +12,28 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(Property);
       this.belongsTo(SourceField);
     }
-  };
-  PropertyDetail.init({
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-      allowNull: false,
+  }
+  PropertyDetail.init(
+    {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+        allowNull: false,
+      },
+      details: {
+        type: DataTypes.TEXT,
+      },
+      isDeleted: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
     },
-    details: {
-      type: DataTypes.TEXT,
-    },
-    isDeleted: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-      allowNull: false,
-    },
-  }, {
-    sequelize,
-    modelName: 'PropertyDetail',
-  });
+    {
+      sequelize,
+      modelName: "PropertyDetail",
+    }
+  );
   return PropertyDetail;
 };

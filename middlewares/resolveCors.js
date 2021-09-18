@@ -9,11 +9,6 @@ const resolveCors = (req, res, next) => {
     return res.status(200).json({});
   }
 
-  // For long polling:::
-  if (req.method == "GET") {
-    res.header("Transfer-Encoding", "chunked");
-  }
-
   next();
 };
 

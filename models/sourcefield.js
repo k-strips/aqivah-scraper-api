@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class SourceField extends Model {
     /**
@@ -9,47 +7,51 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ Field, Source, FieldType }) {
+    static associate({ Field, Source, FieldType, PropertyDetail }) {
       // define association here
       this.belongsTo(Field);
       this.belongsTo(Source);
-      this.belongsTo(FieldType, { foreignKey: 'typeId' });
+      this.belongsTo(FieldType, { foreignKey: "typeId" });
+      this.hasMany(PropertyDetail);
     }
-  };
-  SourceField.init({
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      allowNull: false,
-      primaryKey: true,
+  }
+  SourceField.init(
+    {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
+        primaryKey: true,
+      },
+      selector: {
+        type: DataTypes.STRING,
+        // allowNull: false,
+      },
+      isAqivahField: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      isRequired: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      isActive: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      defaultValue: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "",
+      },
     },
-    selector: {
-      type: DataTypes.STRING,
-      // allowNull: false,
-    },
-    isAqivahField: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: true,
-    },
-    isRequired: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-    isActive: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: true,
-    },
-    defaultValue: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: "",
+    {
+      sequelize,
+      modelName: "SourceField",
     }
-  }, {
-    sequelize,
-    modelName: 'SourceField',
-  });
+  );
   return SourceField;
 };
