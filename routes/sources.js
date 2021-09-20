@@ -11,6 +11,7 @@ const { Source, SourceField, Field, FieldType } = require("../models");
 // const sources = require('./../models/sources');
 const resolveCors = require("../middlewares/resolveCors");
 const APIFeatures = require("../utils/apiFeatures");
+const { ScraperSession } = require("../models");
 
 router.use(resolveCors);
 
@@ -207,8 +208,18 @@ router.delete("/:id", async (req, res) => {
   if (!id) return res.status(400).json({ message: "No ID passed" });
 
   try {
-    const result = await Source.destroy({ where: { id } });
-    res.status(200).json(result);
+    const source = await Source.findByPk(id, {
+      include: { all: true, nested: false },
+    });
+
+    // First, delete all scraper sessions instances for this source...
+    const relatedScraperSessionsIds = source.ScraperSessions.map((el) => el.id);
+    await ScraperSession.destroy({ where: { id: relatedScraperSessionsIds } });
+
+    // ...then delete the source
+    await Source.destroy({ where: { id } });
+
+    res.status(204).json();
   } catch (error) {
     res.status(500).json(error);
   }
