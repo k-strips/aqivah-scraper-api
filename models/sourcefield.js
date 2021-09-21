@@ -12,8 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(Field);
       this.belongsTo(Source);
       this.belongsTo(FieldType, {
-        foreignKey: "typeId",
-        allowNull: false,
+        foreignKey: { field: "typeId", allowNull: false },
       });
       this.hasMany(PropertyDetail);
     }
