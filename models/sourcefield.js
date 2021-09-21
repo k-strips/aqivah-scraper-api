@@ -11,7 +11,9 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.belongsTo(Field);
       this.belongsTo(Source);
-      this.belongsTo(FieldType, { foreignKey: "typeId" });
+      this.belongsTo(FieldType, {
+        foreignKey: { field: "typeId", allowNull: false },
+      });
       this.hasMany(PropertyDetail);
     }
   }
