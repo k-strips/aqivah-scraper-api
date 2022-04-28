@@ -24,24 +24,28 @@ const db = {};
 //   );
 // }
 
+// const sequelize = new Sequelize(
+//   process.env.DATABASE,
+//   process.env.DATABASE_USER,
+//   process.env.DATABASE_PASSWORD,
+//   {
+//     username: process.env.DATABASE_USER,
+//     password: process.env.DATABASE_PASSWORD,
+//     database: process.env.DATABASE,
+//     host: process.env.DATABASE_HOST,
+//     dialect: "postgres",
+//     dialectOptions: {
+//       connectionTimeout: 60000,
+//       ssl: {
+//         require: true,
+//         rejectUnauthorized: false,
+//       },
+//     },
+//   }
+// );
+
 const sequelize = new Sequelize(
-  process.env.DATABASE,
-  process.env.DATABASE_USER,
-  process.env.DATABASE_PASSWORD,
-  {
-    username: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE,
-    host: process.env.DATABASE_HOST,
-    dialect: "postgres",
-    dialectOptions: {
-      connectionTimeout: 60000,
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      },
-    },
-  }
+  "postgres://stephen:qwerty_1@localhost:5432/accertix?schema=scraper"
 );
 
 fs.readdirSync(__dirname)
