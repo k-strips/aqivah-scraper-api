@@ -1,7 +1,9 @@
 const sqlite = require("sqlite3");
 const { Sequelize } = require("sequelize");
 
-const postgres = "postgres://postgres:postgres@localhost:5432/aqivah-scraper";
+const postgres =
+  process.env.DATABASE_URL |
+  "postgres://postgres:postgres@localhost:5432/aqivah-scraper";
 const sequelize = new Sequelize(postgres);
 
 let db = null;
