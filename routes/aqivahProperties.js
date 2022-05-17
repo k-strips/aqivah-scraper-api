@@ -19,6 +19,7 @@ router.get("/", async (req, res) => {
     const fetchedRequiredProperties = await Property.findAll({
       offset: skip,
       // limit,
+      // attributes: ["url"],
       include: [
         {
           model: PropertyDetail,
@@ -53,12 +54,16 @@ router.get("/", async (req, res) => {
       ],
     });
 
+    console.log(fetchedRequiredProperties);
+
     fetchedRequiredProperties.forEach((prop) => {
       let eachProperty = {};
+      eachProperty.url = prop.url;
       prop.PropertyDetails.forEach((propDetail) => {
         if (!propDetail.details) {
           eachProperty[propDetail.SourceField.Field.label] =
             propDetail.SourceField.defaultValue;
+          // eachProperty.url =
         } else {
           eachProperty[propDetail.SourceField.Field.label] = propDetail.details;
         }

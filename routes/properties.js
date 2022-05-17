@@ -55,6 +55,11 @@ router.get("/:id", async (req, res) => {
       where: { id },
       include: { all: true, nested: true },
     });
+
+    console.log(result);
+    // let returnProperty = {
+    //   description: result.PropertyDetails[0].details,
+    // };
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);

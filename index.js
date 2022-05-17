@@ -10,7 +10,7 @@ const fieldRoutes = require("./routes/fields");
 const propertyRoutes = require("./routes/properties");
 const fieldTypeRoutes = require("./routes/fieldTypes");
 const scrapingSessionRoutes = require("./routes/scrapingSessions");
-const aquivahProperties = require("./routes/aquivahProperties");
+const aqivahProperties = require("./routes/aqivahProperties");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -38,7 +38,7 @@ app.use("/fields", fieldRoutes);
 app.use("/properties", propertyRoutes);
 app.use("/field-types", fieldTypeRoutes);
 app.use("/scraper-sessions", scrapingSessionRoutes);
-app.use("/aquivah-properties", aquivahProperties);
+app.use("/aqivah-properties", aqivahProperties);
 
 app.get("/", (req, res) => res.status(200).send("welcome to the aqivah api"));
 
