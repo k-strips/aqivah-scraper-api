@@ -45,7 +45,8 @@ const db = {};
 // );
 
 const sequelize = new Sequelize(
-  "postgres://stephen:qwerty_1@localhost:5432/accertix?schema=scraper"
+  // "postgres://stephen:qwerty_1@localhost:5432/accertix?schema=scraper"
+  "postgres://smflxxgjhdgdrh:2329c9f81115133e48e7e407435d58019146531d34625a3bf101895187d495a1@ec2-54-86-224-85.compute-1.amazonaws.com:5432/d2og4b9jvjmtii"
 );
 
 fs.readdirSync(__dirname)
