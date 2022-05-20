@@ -14,9 +14,12 @@ module.exports = {
     password: DB_PASSWORD,
     database: DATABASE,
     host: DB_HOST,
+    port: 5432,
+    ssl: true,
     dialect: "postgres",
     dialectOptions: {
       connectionTimeout: 60000,
+      ssl: { require: true },
     },
   },
   production: {
