@@ -27,6 +27,7 @@ module.exports = {
     dialect: "postgres",
     dialectOptions: {
       connectionTimeout: 60000,
+      ssl: true,
     },
   },
 };
