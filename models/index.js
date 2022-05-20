@@ -3,50 +3,28 @@
 const fs = require("fs");
 const path = require("path");
 const Sequelize = require("sequelize");
-const dotenv = require("dotenv");
-
-dotenv.config({ path: "./config.env" });
-
 const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || "staging";
-// const config = require(__dirname + "/../config/config.json")[env];
+const env = process.env.NODE_ENV || "development";
+const config = require(__dirname + "/../config/config.js")[env];
 const db = {};
 
-// let sequelize;
-// if (config.use_env_variable) {
-//   sequelize = new Sequelize(process.env[config.use_env_variable], config);
-// } else {
-//   sequelize = new Sequelize(
-//     config.database,
-//     config.username,
-//     config.password,
-//     config
-//   );
-// }
+let sequelize;
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    config
+  );
+}
 
-// const sequelize = new Sequelize(
-//   process.env.DATABASE,
-//   process.env.DATABASE_USER,
-//   process.env.DATABASE_PASSWORD,
-//   {
-//     username: process.env.DATABASE_USER,
-//     password: process.env.DATABASE_PASSWORD,
-//     database: process.env.DATABASE,
-//     host: process.env.DATABASE_HOST,
-//     dialect: "postgres",
-//     dialectOptions: {
-//       connectionTimeout: 60000,
-//       ssl: {
-//         require: true,
-//         rejectUnauthorized: false,
-//       },
-//     },
-//   }
-// );
+console.log(config);
 
-const sequelize = new Sequelize(
-  "postgres://stephen:qwerty_1@localhost:5432/accertix?schema=scraper"
-);
+// // const sequelize = new Sequelize(
+// //   "postgres://stephen:qwerty_1@localhost:5432/accertix?schema=scraper"
+// // );
 
 fs.readdirSync(__dirname)
   .filter((file) => {
