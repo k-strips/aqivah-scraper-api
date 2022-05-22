@@ -36,5 +36,12 @@ module.exports = {
       connectionTimeout: 60000,
       // ssl: { require: true },
     },
+    pool: {
+      max: 15,
+      min: 5,
+      idle: 20000,
+      evict: 15000,
+      acquire: 30000,
+    },
   },
 };
